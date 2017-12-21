@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">拍照笔记</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">设置</string>
+    <string name="new_dir">新建文件夹</string>
+    <string name="new_notebook">新建笔记本</string>
+    <string name="text">我的文本</string>
+    <string name="ppt">我的幻灯片</string>
+    <string name="card">名片与证件</string>
+</resources>

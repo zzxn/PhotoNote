@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_dark"
+    android:orientation="vertical">
+
+    <me.pqpo.smartcropperlib.view.CropImageView
+        android:id="@+id/image_crop"
+        android:layout_width="match_parent"
+        android:padding="24dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:civLineColor="@color/colorPrimary"
+        app:civMagnifierCrossColor="@color/colorPrimaryDark"/>
+
+    <LinearLayout
+        android:background="@color/translucentGreen"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+
+        <FrameLayout
+            android:layout_margin="5dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp">
+
+            <ImageView
+                android:layout_margin="7dp"
+                android:id="@+id/pre_photo"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:visibility="invisible"
+                android:textAlignment="center"
+                android:text="1"
+                android:background="@drawable/text_round_background"
+                android:textSize="12sp"
+                android:id="@+id/photo_number"
+                android:textColor="@color/white"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                tools:ignore="HardcodedText" />
+
+        </FrameLayout>
+
+        <ImageView
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_photo_camera"
+            android:id="@+id/take_photo"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_ok"
+            android:id="@+id/save"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_drop"
+            android:id="@+id/drop"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_exit"
+            android:id="@+id/exit"
+            android:layout_width="48dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
