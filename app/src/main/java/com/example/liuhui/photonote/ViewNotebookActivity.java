@@ -66,8 +66,10 @@ public class ViewNotebookActivity extends AppCompatActivity {
         noteGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                NoteView noteView = notes.get(position);
-                Toast.makeText(ViewNotebookActivity.this, noteView.getNoteNumber()+"", Toast.LENGTH_SHORT).show();
+//                item 被点击的时候，activity切换到ViewNoteActivity
+                Intent intent = new Intent(ViewNotebookActivity.this, ViewNoteActivity.class);
+                intent.putExtra("paths", paths);
+                startActivity(intent);
                 return false;
             }
         });
