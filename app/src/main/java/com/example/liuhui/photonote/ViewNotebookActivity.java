@@ -60,7 +60,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
 //        得到布局中的delete note
         deleteNote = (FloatingActionButton) findViewById(R.id.delete_note); 
 
-//        初始化notebook
+//        初始x`化notebook
         initNotebook();
 
         noteGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {

@@ -28,6 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 
+import site.gemus.openingstartanimation.DrawStrategy;
+import site.gemus.openingstartanimation.LineDrawStrategy;
+import site.gemus.openingstartanimation.OpeningStartAnimation;
+import site.gemus.openingstartanimation.RotationDrawStrategy;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -48,6 +53,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        new OpeningStartAnimation.Builder(this).setDrawStategy(new LineDrawStrategy())
+                    .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
+                .create().show(this);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
