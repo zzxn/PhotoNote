@@ -6,4 +6,10 @@
     android:layout_height="match_parent"
     tools:context="com.example.liuhui.photonote.ViewNoteActivity">
 
+    <fragment
+        android:id="@+id/view_note_fragment"
+        android:name="com.example.liuhui.photonote.ViewNoteFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </android.support.constraint.ConstraintLayout>
