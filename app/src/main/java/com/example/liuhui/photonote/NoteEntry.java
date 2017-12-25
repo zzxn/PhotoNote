@@ -10,13 +10,15 @@ import java.util.Date;
 
 public class NoteEntry {
     private String title;
-    private Date date;
+    private String  date;
     private Bitmap picture;
+    private int type;
 
-    public NoteEntry(String title, Date date, Bitmap picture) {
+    public NoteEntry(String title, String date, Bitmap picture, int type) {
         this.title = title;
         this.date = date;
         this.picture = picture;
+        this.type = type;
     }
 
     public String getTitle() {
@@ -27,11 +29,11 @@ public class NoteEntry {
         this.title = title;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -41,5 +43,13 @@ public class NoteEntry {
 
     public void setPicture(Bitmap picture) {
         this.picture = picture;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

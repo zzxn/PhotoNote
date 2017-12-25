@@ -1,14 +1,18 @@
 package com.example.liuhui.photonote;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -40,11 +44,42 @@ public class ViewNotebookActivity extends AppCompatActivity {
 
     private int selectedNoteNumber = 0;
 
+    private boolean fromMain = false;
+
+    private long id = 0;
+
+    private long dirId = 0;
+
+    private int type = 0;
+
+    private String name = " ";
+
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_notebook);
-        paths = getIntent().getStringArrayListExtra("paths");
+        fromMain = getIntent().getBooleanExtra("fromMain", false);
+        if (!fromMain)
+            paths = getIntent().getStringArrayListExtra("paths");
+        id = getIntent().getLongExtra("id", 0);
+        dirId = getIntent().getLongExtra("dirId", 0);
+        type = getIntent().getIntExtra("type", 0);
+        name = getIntent().getStringExtra("name");
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (name.equals(" "))
+            toolbar.setTitle("新建笔记");
+        else
+            toolbar.setTitle(name);
+
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                show_dialog();
+            }
+        });
 
 //        根据传入的paths创建bitmap对象链表
         for (String path:paths
@@ -60,7 +95,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
 //        得到布局中的delete note
         deleteNote = (FloatingActionButton) findViewById(R.id.delete_note); 
 
-//        初始x`化notebook
+//        初始化notebook
         initNotebook();
 
         noteGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -142,11 +177,9 @@ public class ViewNotebookActivity extends AppCompatActivity {
         for (int i = 0 ; i < size ; i++)
             notes.add(new NoteView(i+1, savedBitmaps.get(i), paths.get(i)));
 
-        if (notes.size() > 0){
-            notesAdapter = new NoteViewAdapter(ViewNotebookActivity.this,
-                    R.layout.note_view_container, notes);
-            noteGridView.setAdapter(notesAdapter);
-        }
+        notesAdapter = new NoteViewAdapter(ViewNotebookActivity.this,
+                R.layout.note_view_container, notes);
+        noteGridView.setAdapter(notesAdapter);
     }
 
     /**
@@ -160,8 +193,18 @@ public class ViewNotebookActivity extends AppCompatActivity {
     public void onBackPressed() {
 //        当后退键按下时，应该向main activity传递一些信息
 //        在这里使用static 全局变量来传递新笔记本的名称
-        setNewNotebookName("新建笔记");
-        super.onBackPressed();
+        if (name.equals(" ")) {
+            show_dialog();
+            name = toolbar.getTitle().toString();
+            setNewNotebookName(name);
+        }
+        else if (fromMain){
+            super.onBackPressed();
+        }
+        else {
+            setNewNotebookName(name);
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -192,5 +235,30 @@ public class ViewNotebookActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    private void show_dialog(){
+        final EditText inputName = new EditText(this);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("输入笔记本名称哈").setView(inputName).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(ViewNotebookActivity.this, "取消输入", Toast.LENGTH_SHORT).show();
+            }
+        }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String inputN = inputName.getText().toString();
+                if (inputN.length() > 0) {
+                    name = inputN;
+                    toolbar.setTitle(inputN);
+                }
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
