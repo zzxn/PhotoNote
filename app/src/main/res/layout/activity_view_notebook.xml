@@ -7,7 +7,16 @@
     android:layout_height="match_parent"
     tools:context="com.example.liuhui.photonote.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:title="@string/text"
+        android:titleTextColor="@color/white"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"/>
+
     <LinearLayout
+        android:layout_marginTop="60dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

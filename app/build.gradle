@@ -30,5 +30,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.pqpo:SmartCropper:v1.1.0@aar'
     compile 'site.gemus:openingstartanimation:1.0.0'
+    compile 'org.litepal.android:core:1.6.1'
     testCompile 'junit:junit:4.12'
 }

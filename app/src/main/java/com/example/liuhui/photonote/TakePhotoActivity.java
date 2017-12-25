@@ -107,7 +107,8 @@ public class TakePhotoActivity extends AppCompatActivity {
 
                     try {
                         File savedPhoto = new File(getExternalFilesDir("img"), "saved"+index+".jpg");
-                        paths.add(savedPhoto.getPath());
+                        Log.w(TAG, "onClick: "+savedPhoto.getAbsolutePath());
+                        paths.add(savedPhoto.getAbsolutePath());
                         index+=1;
                         FileOutputStream fos = new FileOutputStream(savedPhoto);
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
@@ -151,6 +152,7 @@ public class TakePhotoActivity extends AppCompatActivity {
 //            如果上一级activity是MainActivity，则启动ViewNotebookActivity
             Intent intent = new Intent(TakePhotoActivity.this, ViewNotebookActivity.class);
             intent.putExtra("paths", paths);
+            intent.putExtra("name", " ");
             startActivity(intent);
         }else {
 //            如果上一级activity是ViewNotebookActivity，则设置result
@@ -194,10 +196,10 @@ public class TakePhotoActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_TAKE_PHOTO && tempFile.exists()) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(tempFile.getPath(), options);
+            BitmapFactory.decodeFile(tempFile.getAbsolutePath(), options);
             options.inJustDecodeBounds = false;
             options.inSampleSize = calculateSampleSize(options);
-            bi = BitmapFactory.decodeFile(tempFile.getPath(), options);
+            bi = BitmapFactory.decodeFile(tempFile.getAbsolutePath(), options);
         }
 
         if (bi != null)
