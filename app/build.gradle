@@ -5,8 +5,8 @@ android {
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "com.example.liuhui.photonote"
-        minSdkVersion 16
-        targetSdkVersion 26
+        minSdkVersion 15
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -29,6 +29,8 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.pqpo:SmartCropper:v1.1.0@aar'
+    compile 'com.github.chrisbanes:PhotoView:2.1.1'
+    compile 'org.litepal.android:core:1.3.2'
     compile 'site.gemus:openingstartanimation:1.0.0'
     compile 'org.litepal.android:core:1.6.1'
     testCompile 'junit:junit:4.12'

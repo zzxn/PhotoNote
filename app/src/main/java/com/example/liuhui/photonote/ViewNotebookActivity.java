@@ -98,14 +98,13 @@ public class ViewNotebookActivity extends AppCompatActivity {
 //        初始化notebook
         initNotebook();
 
-        noteGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        noteGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 //                item 被点击的时候，activity切换到ViewNoteActivity
                 Intent intent = new Intent(ViewNotebookActivity.this, ViewNoteActivity.class);
                 intent.putExtra("paths", paths);
                 startActivity(intent);
-                return false;
             }
         });
 
