@@ -6,21 +6,16 @@ public class Note extends DataSupport {
 
     /* photo保存的路径 */
     private String path;
-
-    /* note在一个notebook中的索引 */
-    private int index;
-
     /* 笔记所属notebook的id */
     private long notebookId;
 
-    /* note的id */
-    private long id;
-
     /* 构造器 */
-    public Note(String path, int index, long notebookId) {
-        this.path = path;
-        this.index = index;
-        this.notebookId = notebookId;
+    public Note(String path, long notebookId) {
+        setPath(path);
+        setNotebookId(notebookId);
+    }
+
+    public Note() {
     }
 
     /* getter and setter */
@@ -32,14 +27,6 @@ public class Note extends DataSupport {
         this.path = path;
     }
 
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
     public long getNotebookId() {
         return notebookId;
     }
@@ -48,12 +35,8 @@ public class Note extends DataSupport {
         return getBaseObjId();
     }
 
-    public void setNotebookId(int notebookId) {
+    public void setNotebookId(long notebookId) {
         this.notebookId = notebookId;
     }
 
-    @Override
-    public void setToDefault(String fieldName) {
-        super.setToDefault(fieldName);
-    }
 }

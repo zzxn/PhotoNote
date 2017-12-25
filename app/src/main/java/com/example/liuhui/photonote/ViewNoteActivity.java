@@ -18,6 +18,14 @@ public class ViewNoteActivity extends AppCompatActivity {
     private static final String TAG = "ViewNoteActivity";
     private ArrayList<String> paths;
 
+    static {
+        Mark.deleteAll(Mark.class);
+        Mark mark = new Mark(0.5, 0.5, 1, "one：测试mark文字");
+        mark.save();
+        Mark mark1 = new Mark(0.3, 0.7, 1, "two：测试mark文字");
+        mark1.save();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +62,8 @@ public class ViewNoteActivity extends AppCompatActivity {
             public void destroyItem(ViewGroup container, int position, Object object) {
                 container.removeView((View) object);
             }
+
+
         };
         viewPager.setAdapter(pagerAdapter);
     }
