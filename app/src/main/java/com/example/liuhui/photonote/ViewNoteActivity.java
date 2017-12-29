@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 
@@ -51,22 +52,16 @@ public class ViewNoteActivity extends AppCompatActivity {
             @Override
             public Object instantiateItem(ViewGroup container, int position) {
                 PhotoView photoView = new PhotoView(container.getContext());
+                photoView.setPos(position);
                 photoView.setImageBitmap(BitmapFactory.decodeFile(paths.get(position)));
-
                 container.addView(photoView, ViewPager.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT);
-
                 return photoView;
             }
-
             @Override
             public void destroyItem(ViewGroup container, int position, Object object) {
                 container.removeView((View) object);
             }
-
-
         };
         viewPager.setAdapter(pagerAdapter);
     }
-
-
 }
