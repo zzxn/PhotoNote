@@ -2,7 +2,11 @@ package com.example.liuhui.photonote;
 
 import org.litepal.crud.DataSupport;
 
-public class Notebook extends DataSupport{
+public class Notebook extends DataSupport {
+
+    public static final int NOTE_TYPE_TEXT = 0;
+    public static final int NOTE_TYPE_PPT = 1;
+    public static final int NOTE_TYPE_CARD = 2;
 
     /* 笔记本的名称 */
     private String name;
@@ -12,9 +16,6 @@ public class Notebook extends DataSupport{
 
     /* 笔记本的类型 text ppt card */
     private int type;
-
-    /* 基本本所属dir的id */
-    private long dirId;
 
     /* 笔记本第一条笔记的id */
     private long noteId;
@@ -29,12 +30,14 @@ public class Notebook extends DataSupport{
         this.type = type;
     }
 
-    public Notebook(String name, String date, int type,long dirId, long noteId) {
-        this.name = name;
-        this.date = date;
-        this.type = type;
-        this.dirId = dirId;
-        this.noteId = noteId;
+    public Notebook(String name, String date, int type, long noteId) {
+        setName(name);
+        setDate(date);
+        setType(type);
+        setNoteId(noteId);
+    }
+
+    public Notebook() {
     }
 
     /* getter anf setter */
@@ -62,28 +65,15 @@ public class Notebook extends DataSupport{
         this.type = type;
     }
 
-    public long getDirId() {
-        return dirId;
-    }
-
-    public void setDirId(int dirId) {
-        this.dirId = dirId;
-    }
-
     public long getNoteId() {
         return noteId;
     }
 
-    public void setNoteId(int noteId) {
+    public void setNoteId(long noteId) {
         this.noteId = noteId;
     }
 
     public long getId() {
         return getBaseObjId();
-    }
-
-    @Override
-    public void setToDefault(String fieldName) {
-        super.setToDefault(fieldName);
     }
 }

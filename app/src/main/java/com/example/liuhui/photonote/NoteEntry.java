@@ -1,7 +1,6 @@
 package com.example.liuhui.photonote;
 
 import android.graphics.Bitmap;
-import java.util.Date;
 
 /**
  * Created by 16307110325 Zhu xiaoning
@@ -10,15 +9,13 @@ import java.util.Date;
 
 public class NoteEntry {
     private String title;
-    private String  date;
+    private String date;
     private Bitmap picture;
-    private int type;
 
-    public NoteEntry(String title, String date, Bitmap picture, int type) {
+    public NoteEntry(String title, String date, Bitmap picture) {
         this.title = title;
         this.date = date;
         this.picture = picture;
-        this.type = type;
     }
 
     public String getTitle() {
@@ -45,11 +42,4 @@ public class NoteEntry {
         this.picture = picture;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
 }

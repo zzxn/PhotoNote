@@ -9,43 +9,40 @@ import org.litepal.crud.DataSupport;
 public class Mark extends DataSupport {
 
     /* mark所处的横坐标 */
-    private float x;
-
+    private double x;
     /* mark所处的纵坐标 */
-    private float y;
-
+    private double y;
     /* mark所属的笔记的id */
     private long noteId;
-
-    /* mark的id */
-    private long id;
-
     /* mark所携带的信息 */
     private String mess;
 
     /* 构造器 */
-    public Mark(float x, float y, long noteId, String mess) {
-        this.x = x;
-        this.y = y;
-        this.noteId = noteId;
-        this.mess = mess;
+    public Mark(double x, double y, long noteId, String mess) {
+        setX(x);
+        setY(y);
+        setNoteId(noteId);
+        setMess(mess);
+    }
+
+    public Mark() {
     }
 
     /* getter and setter */
 
-    public float getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(double x) {
         this.x = x;
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(double y) {
         this.y = y;
     }
 
@@ -53,7 +50,7 @@ public class Mark extends DataSupport {
         return noteId;
     }
 
-    public void setNoteId(int noteId) {
+    public void setNoteId(long noteId) {
         this.noteId = noteId;
     }
 
@@ -69,8 +66,4 @@ public class Mark extends DataSupport {
         return getBaseObjId();
     }
 
-    @Override
-    public void setToDefault(String fieldName) {
-        super.setToDefault(fieldName);
-    }
 }

@@ -6,7 +6,6 @@
 
     <list>
 
-        <mapping class="com.example.liuhui.photonote.Dir"/>
         <mapping class="com.example.liuhui.photonote.Notebook"/>
         <mapping class="com.example.liuhui.photonote.Note"/>
         <mapping class="com.example.liuhui.photonote.Mark"/>
