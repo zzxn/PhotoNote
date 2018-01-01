@@ -49,7 +49,6 @@ public class ViewNoteActivity extends AppCompatActivity {
 
             final PhotoView photoView = container.findViewById(R.id.photo_view);
             photoView.setImageBitmap(BitmapFactory.decodeFile(paths.get(i)));
-            photoView.setPos(i);
 
             if (i == 0) {
                 FrameLayout mark_layer = container.findViewById(R.id.mark_layer);
@@ -91,7 +90,7 @@ public class ViewNoteActivity extends AppCompatActivity {
                                 }
                             });
                             try {
-                                Thread.sleep(1);
+                                Thread.sleep(50);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }

@@ -34,16 +34,6 @@ public class PhotoView extends ImageView {
     private PhotoViewAttacher attacher;
     private ScaleType pendingScaleType;
 
-    private int pos = 0;
-
-    public void setPos(int pos) {
-        this.pos = pos;
-    }
-
-    public int getPos() {
-        return pos;
-    }
-
     public PhotoView(Context context) {
         this(context, null);
     }
