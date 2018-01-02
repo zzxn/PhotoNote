@@ -17,9 +17,6 @@ public class Notebook extends DataSupport {
     /* 笔记本的类型 text ppt card */
     private int type;
 
-    /* 笔记本第一条笔记的id */
-    private long noteId;
-
     /* notebook的id */
     private long id;
 
@@ -30,12 +27,6 @@ public class Notebook extends DataSupport {
         this.type = type;
     }
 
-    public Notebook(String name, String date, int type, long noteId) {
-        setName(name);
-        setDate(date);
-        setType(type);
-        setNoteId(noteId);
-    }
 
     public Notebook() {
     }
@@ -65,15 +56,12 @@ public class Notebook extends DataSupport {
         this.type = type;
     }
 
-    public long getNoteId() {
-        return noteId;
-    }
-
-    public void setNoteId(long noteId) {
-        this.noteId = noteId;
-    }
-
     public long getId() {
-        return getBaseObjId();
+        return id;
+    }
+
+    /* 需要自己手动设置id了 */
+    public void setId(long id) {
+        this.id = id;
     }
 }

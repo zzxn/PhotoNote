@@ -11,6 +11,7 @@ public class NoteEntry {
     private String title;
     private String date;
     private Bitmap picture;
+    private boolean isSelected = false;
 
     public NoteEntry(String title, String date, Bitmap picture) {
         this.title = title;
@@ -42,4 +43,11 @@ public class NoteEntry {
         this.picture = picture;
     }
 
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
 }

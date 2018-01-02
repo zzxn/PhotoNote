@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,7 +18,11 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class ViewNotebookActivity extends AppCompatActivity {
 
@@ -27,6 +32,9 @@ public class ViewNotebookActivity extends AppCompatActivity {
 
 //    记录当前所有笔记的array list
     private ArrayList<NoteView> notes = new ArrayList<>();
+
+//    记录当前所有数据库中note的array list
+    private ArrayList<Note> databaseNotes = new ArrayList<>();
 
 //    根据传入的path创建bitmap对象链表
     private ArrayList<Bitmap> savedBitmaps = new ArrayList<>();
@@ -48,11 +56,9 @@ public class ViewNotebookActivity extends AppCompatActivity {
 
     private long id = 0;
 
-    private long dirId = 0;
-
     private int type = 0;
 
-    private String name = " ";
+    private String name = "";
 
     private Toolbar toolbar;
 
@@ -60,20 +66,78 @@ public class ViewNotebookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_notebook);
+
+        /* 判断是否是从MainActivity启动 */
         fromMain = getIntent().getBooleanExtra("fromMain", false);
-        if (!fromMain)
+
+        /* 不是从MainActivity启动，则是从TakePhotoActivity启动，这个notebook是一个新建的notebook
+         * 得到notes的path,以及notebook的类型(currentPageIndex)
+          * */
+        if (!fromMain){
             paths = getIntent().getStringArrayListExtra("paths");
-        id = getIntent().getLongExtra("id", 0);
-        dirId = getIntent().getLongExtra("dirId", 0);
-        type = getIntent().getIntExtra("type", 0);
-        name = getIntent().getStringExtra("name");
+            type = getIntent().getIntExtra("currentPageIndex", 0);
+            name = "新笔记";
 
+            /* 将这个新建的notebook保存 */
+            Notebook notebook = new Notebook();
+            Date date = new Date();
+            notebook.setName(name);
+            notebook.setType(type);
+            notebook.setDate(date.toString());
+
+            /* 为了设置notebook的id
+             * 必须先得到所有的notebooks
+              * */
+            List<Notebook> notebooks = DataSupport.findAll(Notebook.class);
+            if (notebooks.size()>0)
+                notebook.setId(notebooks.get(notebooks.size()-1).getId()+1);
+            else
+                notebook.setId(1);
+
+            notebook.save();
+            /* 得到当前notebook的id */
+            id = notebook.getId();
+            Log.w(TAG, "onCreate: notebook id"+id);
+
+            /* 计算一下现在数据库中最后一个note的id */
+            List<Note> notes2 = DataSupport.findAll(Note.class);
+            long lastId = 1;
+            if (notes2.size() > 1)
+                lastId = notes2.get(notes2.size()-1).getId()+1;
+
+            /* 将这个notebook的所有notes保存 */
+            for (String path: paths){
+                Note note = new Note();
+                note.setPath(path);
+                note.setNotebookId(notebook.getId());
+                note.setId(lastId);
+                note.save();
+                lastId++;
+                databaseNotes.add(note);
+            }
+        }
+        /* 否则这个notebook不是一个新建的notebook
+         * 得到这个notebook的name和id
+          * */
+        else {
+            name = getIntent().getStringExtra("name");
+            id = getIntent().getLongExtra("id", 0);
+            Log.w(TAG, "onCreate: notebook id"+id);
+
+            /* 找到这个notebook所有的notes */
+            List<Note> notes1 = DataSupport.where("notebookId == ?", id+"").find(Note.class);
+            /* 然后将note的path添加到paths中 */
+            for (Note note: notes1){
+                databaseNotes.add(note);
+                paths.add(note.getPath());
+            }
+        }
+
+        /* 监听toolbar的点击事件
+         * 点击toolbar是为了修改notebook的名字
+          * */
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (name.equals(" "))
-            toolbar.setTitle("新建笔记");
-        else
-            toolbar.setTitle(name);
-
+        toolbar.setTitle(name);
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +145,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
             }
         });
 
-//        根据传入的paths创建bitmap对象链表
+//        根据paths创建bitmap对象链表
         for (String path:paths
              ) {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
@@ -98,16 +162,26 @@ public class ViewNotebookActivity extends AppCompatActivity {
 //        初始化notebook
         initNotebook();
 
+        /* 监听note的点击事件 */
         noteGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 //                item 被点击的时候，activity切换到ViewNoteActivity
                 Intent intent = new Intent(ViewNotebookActivity.this, ViewNoteActivity.class);
+
+                /* 使用bundle
+                 * 将note对象构成的array list传给ViewNoteActivity
+                  * */
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("notes", databaseNotes);
+                intent.putExtras(bundle);
+                intent.putExtra("currentIndex", i);
                 intent.putExtra("paths", paths);
                 startActivity(intent);
             }
         });
 
+        /* 监听note的长按事件 */
         noteGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -127,17 +201,22 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 if (selectedNoteNumber > 0)
                     deleteNote.setVisibility(View.VISIBLE);
                 else deleteNote.setVisibility(View.INVISIBLE);
-                return false;
+                /* return true
+                 * 表示长按事件和点击事件不同时响应
+                  * */
+                return true;
             }
         });
         
 //        监听deleteNote的点击事件
+        /* 从数据库删除note的逻辑还没写 */
         deleteNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 NoteView noteView;
                 if (selectedNoteNumber > 0) {
 //                    删除notes中应该删除的元素和paths中的路径
+//                    外加删除数据库中的note
                     for(int i = 0 ; i < notes.size(); i++){
                         noteView = notes.get(i);
 //                        重新设置noteView中的noteNumber
@@ -145,6 +224,17 @@ public class ViewNotebookActivity extends AppCompatActivity {
                         if (noteView.isSelected()){
                             notes.remove(i);
                             paths.remove(i);
+
+                            /* 现在删除数据库中的note和其中存储的marks */
+                            Note note = databaseNotes.remove(i);
+                            long noteId = note.getId();
+                            /* 删除note */
+                            if (note.isSaved()) {
+                                Log.w(TAG, "onClick: delete a note and it's marks");
+                                note.delete();
+                                /* 删除与之关联的marks */
+                                DataSupport.deleteAll(Mark.class, "noteId = ?", noteId + "");
+                            }
                             i--;
                             selectedNoteNumber--;
                         }
@@ -171,6 +261,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
     }
 
 
+    /* 初始化，更新ui */
     private void initNotebook(){
         int size = savedBitmaps.size();
 
@@ -182,49 +273,55 @@ public class ViewNotebookActivity extends AppCompatActivity {
         noteGridView.setAdapter(notesAdapter);
     }
 
-    /**
-     * @param name 设置新笔记本的名称
-     */
-    private void setNewNotebookName(String name) {
-        MainActivity.newNotebookName = name;
-    }
-
     @Override
     public void onBackPressed() {
-//        当后退键按下时，应该向main activity传递一些信息
-//        在这里使用static 全局变量来传递新笔记本的名称
-        if (name.equals(" ")) {
-            show_dialog();
-            name = toolbar.getTitle().toString();
-            setNewNotebookName(name);
-        }
-        else if (fromMain){
-            super.onBackPressed();
-        }
-        else {
-            setNewNotebookName(name);
-            super.onBackPressed();
-        }
+        /* 现在改成不执行任何额外的逻辑
+         * 只是简单地调用super.onBackPressed
+          * */
+        super.onBackPressed();
     }
 
+    /*
+    * 重载onActivityResult方法
+    * 用于接收从TakePhotoActivity中拍摄的新的notes
+    * 更新ui
+    * 并将这些新的notes保存
+    * */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode){
             case REQUEST_PHOTO_FROM_TAKE_PHOTO:
                 if (resultCode == RESULT_OK){
 //                    从take photo activity中得到新的photo
-                    ArrayList<String> newPaths = data.getStringArrayListExtra("new_paths");
+                    ArrayList<String> newPaths = data.getStringArrayListExtra("newPaths");
                     if (newPaths!=null && newPaths.size() > 0) {
                         int currentNumber = paths.size();
                         Bitmap bitmap;
 
+                        List<Note> dNotes = DataSupport.findAll(Note.class);
+                        long lastId = 1;
+                        if (dNotes.size() > 1)
+                            lastId = dNotes.get(dNotes.size()-1).getId()+1;
+
 //                    将相关数据添加到相应的集合中
                         for (String path : newPaths
                                 ) {
+                            /* 这里是UI方面的逻辑 */
                             paths.add(path);
                             bitmap = BitmapFactory.decodeFile(path);
                             notes.add(new NoteView(currentNumber+1, bitmap, path));
                             currentNumber++;
+
+                            /* 将新拍摄的note储存到数据库中 */
+
+                            Note note = new Note();
+                            note.setPath(path);
+                            note.setNotebookId(id);
+                            note.setId(lastId);
+                            note.save();
+
+                            lastId++;
+                            databaseNotes.add(note);
                         }
 
 //                        更新UI
@@ -237,6 +334,9 @@ public class ViewNotebookActivity extends AppCompatActivity {
         }
     }
 
+    /* 用于得到用户输入的新的notebook的名字
+     * 如果那么改变了，那么便更新数据库中的数据
+      * */
     private void show_dialog(){
         final EditText inputName = new EditText(this);
 
@@ -251,9 +351,14 @@ public class ViewNotebookActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String inputN = inputName.getText().toString();
-                if (inputN.length() > 0) {
-                    name = inputN;
+                if (inputN.length() > 0){
                     toolbar.setTitle(inputN);
+                    name = inputN;
+                    Toast.makeText(ViewNotebookActivity.this, name, Toast.LENGTH_SHORT).show();
+                    /* 更新notebook的name */
+                    Notebook notebook = new Notebook();
+                    notebook.setName(name);
+                    notebook.update(id);
                 }
             }
         });

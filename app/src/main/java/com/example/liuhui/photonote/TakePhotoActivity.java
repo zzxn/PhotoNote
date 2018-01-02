@@ -15,10 +15,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import me.pqpo.smartcropperlib.view.CropImageView;
 
@@ -52,13 +55,21 @@ public class TakePhotoActivity extends AppCompatActivity {
     TextView photoNumber;
 
 //    指示当前photo是否已经保存
-    Boolean alreadySaved = false;
+    boolean alreadySaved = false;
+
+//    指示当前photo是否已经丢弃
+    boolean alreadyDropped = false;
 
 //    指示当前photo的索引
-    int index = 0;
+    int index = 1;
+//    当前已经保存的photo的数量
+    int count = 0;
 
 //    指示上一级activity是否为ViewNotebookActivity
     boolean fromViewNotebook = false;
+
+//    如果上一级activity是MainActivity，currentPageIndex指示当前笔记本的类型
+    int currentPageIndex = 0;
 
 //    已保存photo的path
     ArrayList<String> paths = new ArrayList<>();
@@ -69,6 +80,15 @@ public class TakePhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_take_photo);
         fromViewNotebook = getIntent().getBooleanExtra("from_view_notebook", false);
 
+        /* 如果不是fromViewNotebook
+         * 那么获得当前笔记本的类型
+          * */
+        if (!fromViewNotebook)
+            currentPageIndex = getIntent().getIntExtra("currentPageIndex", 0);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /// 一系列前期处理操作
+        /* 从布局文件中得到必要的组件 */
         imageCrop = (CropImageView) findViewById(R.id.image_crop);
 
         takePhoto = (ImageView) findViewById(R.id.take_photo);
@@ -83,7 +103,17 @@ public class TakePhotoActivity extends AppCompatActivity {
 
         photoNumber = (TextView) findViewById(R.id.photo_number);
 
+        /* 得到数据库中所有的note的数目
+         * litepal默认是按照id的大小排序
+         * 然后设置index的值
+          * */
+        List<Note> notes = DataSupport.findAll(Note.class);
+        if (notes.size() > 0)
+            index = (int)(notes.get(notes.size()-1).getId()+1);
+
         tempFile = new File(getExternalFilesDir("img"), "temp.jpg");
+        /// 前期处理操作完毕
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
 //        刚进入时直接启动拍摄功能
         startCamera();
@@ -100,16 +130,20 @@ public class TakePhotoActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageCrop.canRightCrop() && !alreadySaved){
+                if (imageCrop.canRightCrop() && !alreadySaved && !alreadyDropped){
                     photoNumber.setVisibility(View.VISIBLE);
                     alreadySaved = true;
                     Bitmap bitmap = imageCrop.crop();
 
                     try {
+                        /* 这里只是暂时保存photo到本地
+                         * 并没有将数据保存到数据库中
+                         * 相应的path是可以在下一次被覆盖的
+                          * */
                         File savedPhoto = new File(getExternalFilesDir("img"), "saved"+index+".jpg");
-                        Log.w(TAG, "onClick: "+savedPhoto.getAbsolutePath());
                         paths.add(savedPhoto.getAbsolutePath());
-                        index+=1;
+                        index++;
+                        count++;
                         FileOutputStream fos = new FileOutputStream(savedPhoto);
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                         fos.flush();
@@ -119,10 +153,13 @@ public class TakePhotoActivity extends AppCompatActivity {
                     }
 
                     prePhoto.setImageBitmap(bitmap);
-                    photoNumber.setText(index+"");
+                    photoNumber.setText(count+"");
                     Toast.makeText(TakePhotoActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
                 }
-                else Toast.makeText(TakePhotoActivity.this, "已经保存", Toast.LENGTH_SHORT).show();
+                else if (alreadySaved)
+                    Toast.makeText(TakePhotoActivity.this, "已经保存", Toast.LENGTH_SHORT).show();
+                else if (alreadyDropped)
+                    Toast.makeText(TakePhotoActivity.this, "已经丢弃", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -130,12 +167,13 @@ public class TakePhotoActivity extends AppCompatActivity {
         drop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                alreadySaved = true;
+                /* 设置已经丢弃 */
+                alreadyDropped = true;
                 Toast.makeText(TakePhotoActivity.this, "丢弃笔记", Toast.LENGTH_SHORT).show();
             }
         });
 
-//        退出，进入view notebook activity
+        /* 当退出imageView被点击的时候，进入到ViewNotebookActivity */
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,17 +188,20 @@ public class TakePhotoActivity extends AppCompatActivity {
     private void turnToViewNotebook(){
         if(!fromViewNotebook) {
 //            如果上一级activity是MainActivity，则启动ViewNotebookActivity
+//            将paths和currentPageIndex传给ViewNotebookActivity
             Intent intent = new Intent(TakePhotoActivity.this, ViewNotebookActivity.class);
             intent.putExtra("paths", paths);
-            intent.putExtra("name", " ");
+            intent.putExtra("currentPageIndex", currentPageIndex);
             startActivity(intent);
         }else {
 //            如果上一级activity是ViewNotebookActivity，则设置result
+//            将新的paths传给ViewNotebookActivity
             Intent intent = new Intent();
-            intent.putExtra("new_paths", paths);
+            intent.putExtra("newPaths", paths);
             setResult(RESULT_OK, intent);
         }
 //        结束当前activity
+//        将TakePhotoActivity从栈中删除
         TakePhotoActivity.this.finish();
     }
 
@@ -169,6 +210,7 @@ public class TakePhotoActivity extends AppCompatActivity {
      */
     private void startCamera(){
         alreadySaved = false;
+        alreadyDropped = false;
         Intent startCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tempFile));
         if (startCameraIntent.resolveActivity(getPackageManager()) != null) {
