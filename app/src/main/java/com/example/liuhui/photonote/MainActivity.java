@@ -185,7 +185,6 @@ public class MainActivity extends AppCompatActivity
 
     private void setViewPager() {
         LayoutInflater inflater = getLayoutInflater();
-        // todo inflate tabs
         text_tab = inflater.inflate(R.layout.layout_tab_text, null);
         ppt_tab = inflater.inflate(R.layout.layout_tab_ppt, null);
         card_tab = inflater.inflate(R.layout.layout_tab_card, null);
@@ -226,11 +225,9 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onPageSelected(int position) {
-                // todo change select item
                 currentPageIndex = position;
                 switch (position) {
                     case 0:
-                        // // TODO: 2017/12/17 check nullpointer error
                         toolbar.setTitle(R.string.text);
                         navigationView.getMenu().getItem(0).setChecked(true);
                         break;

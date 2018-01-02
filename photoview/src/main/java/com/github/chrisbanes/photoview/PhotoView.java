@@ -91,6 +91,10 @@ public class PhotoView extends ImageView {
         attacher.setOnLongClickListener(l);
     }
 
+    public void setOnLongPressListener(OnLongPressListener l) {
+        attacher.setmOnLongPressListener(l);
+    }
+
     @Override
     public void setOnClickListener(OnClickListener l) {
         attacher.setOnClickListener(l);

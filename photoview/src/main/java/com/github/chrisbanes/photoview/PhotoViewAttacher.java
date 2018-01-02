@@ -87,6 +87,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
     private OnScaleChangedListener mScaleChangeListener;
     private OnSingleFlingListener mSingleFlingListener;
     private OnViewDragListener mOnViewDragListener;
+    private OnLongPressListener mOnLongPressListener;
 
     private FlingRunnable mCurrentFlingRunnable;
     private int mScrollEdge = EDGE_BOTH;
@@ -153,7 +154,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
         }
     };
 
-    public PhotoViewAttacher(ImageView imageView) {
+    public PhotoViewAttacher(final ImageView imageView) {
         mImageView = imageView;
         imageView.setOnTouchListener(this);
         imageView.addOnLayoutChangeListener(this);
@@ -174,6 +175,17 @@ public class PhotoViewAttacher implements View.OnTouchListener,
             public void onLongPress(MotionEvent e) {
                 if (mLongClickListener != null) {
                     mLongClickListener.onLongClick(mImageView);
+                } else if (mOnLongPressListener != null) {
+                    float w = getDisplayRect().width();
+                    float h = getDisplayRect().height();
+                    float tx = e.getX() - imageView.getX(); // 修正图片排列带来的误差
+                    float ty = e.getY() - imageView.getY();
+                    float rx = getDisplayRect().centerX();
+                    float ry = getDisplayRect().centerY();
+                    // 触摸点相对于图片的相对坐标
+                    float x = (tx + w/2 - rx) / w;
+                    float y = (ty + h/2 - ry) / h;
+                    mOnLongPressListener.onLongPress(x, y);
                 }
             }
 
@@ -776,6 +788,10 @@ public class PhotoViewAttacher implements View.OnTouchListener,
             mCurrentFlingRunnable.cancelFling();
             mCurrentFlingRunnable = null;
         }
+    }
+
+    public void setmOnLongPressListener(OnLongPressListener mOnLongPressListener) {
+        this.mOnLongPressListener = mOnLongPressListener;
     }
 
     private class AnimatedZoomRunnable implements Runnable {
