@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/note_image"
@@ -14,8 +14,7 @@
         tools:ignore="ContentDescription" />
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:padding="5dp"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -24,15 +23,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginStart="108dp"
+            android:layout_marginLeft="108dp"/>
         <TextView
             android:id="@+id/note_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginStart="108dp"
+            android:layout_marginLeft="108dp"/>
     </LinearLayout>
 
-</LinearLayout>
+    <ImageView
+        android:src="@drawable/ic_selected"
+        android:visibility="invisible"
+        android:background="@drawable/image_green_square_background"
+        android:id="@+id/notebook_is_selected"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        tools:ignore="ContentDescription"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="12dp"/>
+
+</RelativeLayout>

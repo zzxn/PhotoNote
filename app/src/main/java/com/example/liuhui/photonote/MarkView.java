@@ -16,7 +16,7 @@ import android.widget.Toast;
  * on 2017/12/31.
  */
 
-public class MarkView extends ImageView {
+public class MarkView extends ImageView  {
     private Mark mark;
 
     public Mark getMark() {
@@ -38,7 +38,7 @@ public class MarkView extends ImageView {
             public void onClick(View view) {
                 if (mark == null) {
                     Toast.makeText(getContext(), "Mark未初始化", Toast.LENGTH_SHORT).show();
-                    return;
+                        return;
                 }
                 MarkPopupWindow popupWindow = new MarkPopupWindow(context, getMark());
                 popupWindow.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
