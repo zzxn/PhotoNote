@@ -176,6 +176,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 bundle.putParcelableArrayList("notes", databaseNotes);
                 intent.putExtras(bundle);
                 intent.putExtra("currentIndex", i);
+                intent.putExtra("paths", paths);
                 Log.w(TAG, "onItemClick: put extra note");
                 startActivity(intent);
             }

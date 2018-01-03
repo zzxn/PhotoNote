@@ -445,8 +445,20 @@ public class MainActivity extends AppCompatActivity
                 path = firstNote.getPath();
                 bitmap = BitmapFactory.decodeFile(path);
             }
-            else
-                bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.note);
+            else{
+                switch (nb.getType()){
+                    case Notebook.NOTE_TYPE_TEXT:
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_text);
+                        break;
+                    case Notebook.NOTE_TYPE_PPT:
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_ppt);
+                        break;
+                    default:
+                        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_card);
+                        break;
+                }
+            }
+
 
             if (nb.getType() == Notebook.NOTE_TYPE_TEXT) {
                 textNbs.add(nb);
@@ -465,7 +477,6 @@ public class MainActivity extends AppCompatActivity
 
     private void setViewPager() {
         LayoutInflater inflater = getLayoutInflater();
-        // todo inflate tabs
         text_tab = inflater.inflate(R.layout.layout_tab_text, null);
         ppt_tab = inflater.inflate(R.layout.layout_tab_ppt, null);
         card_tab = inflater.inflate(R.layout.layout_tab_card, null);
@@ -506,13 +517,11 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onPageSelected(int position) {
-                // todo change select item
                 currentPageIndex = position;
                 /* 将deleteNotebook这个悬浮按钮设置为不可见 */
                 deleteNotebook.setVisibility(View.INVISIBLE);
                 switch (position) {
                     case 0:
-                        // // TODO: 2017/12/17 check nullpointer error
                         /* 清除当前page的所有notebook的选中状态 */
                         textSelectedNumber = 0;
                         // 现在需要获得list view中的所有view
@@ -684,24 +693,28 @@ public class MainActivity extends AppCompatActivity
                     if (notebooks.size()>0)
                         id = notebooks.get(notebooks.size()-1).getId()+1;
                     Notebook nb = new Notebook(name,date.toString(), currentPageIndex);
+                    NoteEntry entry;
                     nb.setId(id);
                     nb.save();
-
-                    NoteEntry entry = new NoteEntry(name, date.toString(),
-                            BitmapFactory.decodeResource(getResources(), R.mipmap.note));
                     switch (currentPageIndex){
                         case 0:
                             textNbs.add(nb);
+                            entry = new NoteEntry(name, date.toString(),
+                                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_text));
                             textNoteEntryList.add(entry);
                             textAdapter.notifyDataSetChanged();
                             break;
                         case 1:
                             pptNbs.add(nb);
+                            entry = new NoteEntry(name, date.toString(),
+                                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_ppt));
                             pptNoteEntryList.add(entry);
                             pptAdapter.notifyDataSetChanged();
                             break;
                         case 2:
                             cardNbs.add(nb);
+                            entry = new NoteEntry(name, date.toString(),
+                                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_card));
                             cardNoteEntryList.add(entry);
                             cardAdapter.notifyDataSetChanged();
                             break;

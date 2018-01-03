@@ -10,4 +10,12 @@
     <string name="text">我的文本</string>
     <string name="ppt">我的幻灯片</string>
     <string name="card">名片与证件</string>
+    <string name="mark_content">标记内容</string>
+    <string name="edit">编辑</string>
+    <string name="save">保存</string>
+    <string name="text_text">
+        测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本
+        测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本测试文本
+    </string>
+    <string name="mark_hint">点击编辑按钮，输入笔记</string>
 </resources>

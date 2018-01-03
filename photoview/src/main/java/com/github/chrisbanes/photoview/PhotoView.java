@@ -34,16 +34,6 @@ public class PhotoView extends ImageView {
     private PhotoViewAttacher attacher;
     private ScaleType pendingScaleType;
 
-    private int pos = 0;
-
-    public void setPos(int pos) {
-        this.pos = pos;
-    }
-
-    public int getPos() {
-        return pos;
-    }
-
     public PhotoView(Context context) {
         this(context, null);
     }
@@ -99,6 +89,10 @@ public class PhotoView extends ImageView {
     @Override
     public void setOnLongClickListener(OnLongClickListener l) {
         attacher.setOnLongClickListener(l);
+    }
+
+    public void setOnLongPressListener(OnLongPressListener l){
+        attacher.setmOnLongPressListener(l);
     }
 
     @Override

@@ -5,7 +5,9 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -14,7 +16,7 @@ import android.widget.Toast;
  * on 2017/12/31.
  */
 
-public class MarkView extends ImageView implements View.OnClickListener {
+public class MarkView extends ImageView  {
     private Mark mark;
 
     public Mark getMark() {
@@ -25,33 +27,22 @@ public class MarkView extends ImageView implements View.OnClickListener {
         this.mark = mark;
     }
 
-    @Override
-    public void onClick(View view) {
-        Mark curMark = getMark();
-        if (curMark == null) {
-            Toast.makeText(getContext(), "Mark未初始化", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        // todo set click listener
-        return;
-    }
-
-    public MarkView(Context context) {
+    public MarkView(final Context context, final View parent, final Mark mark) {
         super(context);
+        setMark(mark);
+        this.setImageResource(R.drawable.ic_place);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(64, 64);
+        this.setLayoutParams(layoutParams);
+        this.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mark == null) {
+                    Toast.makeText(getContext(), "Mark未初始化", Toast.LENGTH_SHORT).show();
+                        return;
+                }
+                MarkPopupWindow popupWindow = new MarkPopupWindow(context, getMark());
+                popupWindow.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
+            }
+        });
     }
-
-    public MarkView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public MarkView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public MarkView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-
 }

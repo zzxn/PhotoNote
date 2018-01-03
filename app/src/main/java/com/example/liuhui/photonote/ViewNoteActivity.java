@@ -1,8 +1,6 @@
 package com.example.liuhui.photonote;
 
-import android.content.res.ColorStateList;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.RectF;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -13,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
@@ -57,29 +53,18 @@ public class ViewNoteActivity extends AppCompatActivity {
 
             final PhotoView photoView = container.findViewById(R.id.photo_view);
             photoView.setImageBitmap(BitmapFactory.decodeFile(paths.get(i)));
-            photoView.setPos(i);
 
             if (i == 0) {
                 FrameLayout mark_layer = container.findViewById(R.id.mark_layer);
 //                ImageView mark = new ImageView(mark_layer.getContext());
-//                mark.setImageResource(R.drawable.ic_spot);
+//                mark.setImageResource(R.drawable.ic_mark);
 //                mark.setX(200);
 //                mark.setY(200);
-                final TextView mark = new TextView(mark_layer.getContext());
-                mark.setText("test");
-                mark.setTextSize(50);
-                mark.setTextColor(Color.rgb(200, 200, 200));
-                mark.setX(200);
-                mark.setY(200);
-                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                mark.setLayoutParams(layoutParams);
-                mark.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(ViewNoteActivity.this, "click mark!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                mark_layer.addView(mark);
+
+                Mark mark = new Mark(0.5, 0.5, 1, "one：测试mark文字");
+                final MarkView markView = new MarkView(mark_layer.getContext(), mark_layer, mark);
+                mark_layer.addView(markView);
+
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -91,15 +76,15 @@ public class ViewNoteActivity extends AppCompatActivity {
                             float h = rectF.height();
                             final float ox = x - w/2;
                             final float oy = y - h/2;
-                            mark.post(new Runnable() {
+                            markView.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mark.setX(ox);
-                                    mark.setY(oy);
+                                    markView.setX(ox);
+                                    markView.setY(oy);
                                 }
                             });
                             try {
-                                Thread.sleep(1);
+                                Thread.sleep(50);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
