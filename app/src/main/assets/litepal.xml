@@ -5,7 +5,6 @@
     <list>
         <mapping class="com.example.liuhui.photonote.Notebook"/>
         <mapping class="com.example.liuhui.photonote.Note"/>
-        <mapping class="com.example.liuhui.photonote.Mark"/>
         <mapping class="com.example.liuhui.photonote.User"/>
     </list>
 </litepal>

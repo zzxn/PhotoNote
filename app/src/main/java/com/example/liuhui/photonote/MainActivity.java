@@ -309,10 +309,8 @@ public class MainActivity extends AppCompatActivity
                                         List<Note> delNotes =
                                                 DataSupport.where("notebookId == ?", notebookId+"").find(Note.class);
                                         for (Note note:delNotes){
-                                            long noteId = note.getId();
                                             if (note.isSaved()){
                                                 note.delete();
-                                                DataSupport.deleteAll(Mark.class, "noteId = ?", noteId+"");
                                             }
                                         }
                                     }
@@ -345,10 +343,8 @@ public class MainActivity extends AppCompatActivity
                                         List<Note> delNotes =
                                                 DataSupport.where("notebookId == ?", notebookId+"").find(Note.class);
                                         for (Note note:delNotes){
-                                            long noteId = note.getId();
                                             if (note.isSaved()){
                                                 note.delete();
-                                                DataSupport.deleteAll(Mark.class, "noteId = ?", noteId+"");
                                             }
                                         }
                                     }
@@ -381,10 +377,8 @@ public class MainActivity extends AppCompatActivity
                                         List<Note> delNotes =
                                                 DataSupport.where("notebookId == ?", notebookId+"").find(Note.class);
                                         for (Note note:delNotes){
-                                            long noteId = note.getId();
                                             if (note.isSaved()){
                                                 note.delete();
-                                                DataSupport.deleteAll(Mark.class, "noteId = ?", noteId+"");
                                             }
                                         }
                                     }

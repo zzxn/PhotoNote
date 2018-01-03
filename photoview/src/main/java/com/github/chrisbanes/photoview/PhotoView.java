@@ -92,7 +92,7 @@ public class PhotoView extends ImageView {
     }
 
     public void setOnLongPressListener(OnLongPressListener l){
-        attacher.setmOnLongPressListener(l);
+        attacher.setOnLongPressListener(l);
     }
 
     @Override
