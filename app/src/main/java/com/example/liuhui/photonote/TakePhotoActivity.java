@@ -77,6 +77,8 @@ public class TakePhotoActivity extends AppCompatActivity {
 //    保存文件动画
     RelativeLayout saveFile;
 
+    private long currentUserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,8 +88,10 @@ public class TakePhotoActivity extends AppCompatActivity {
         /* 如果不是fromViewNotebook
          * 那么获得当前笔记本的类型
           * */
-        if (!fromViewNotebook)
+        if (!fromViewNotebook) {
             currentPageIndex = getIntent().getIntExtra("currentPageIndex", 0);
+            currentUserId = getIntent().getLongExtra("currentUserId", 0);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// 一系列前期处理操作
@@ -174,6 +178,7 @@ public class TakePhotoActivity extends AppCompatActivity {
             Intent intent = new Intent(TakePhotoActivity.this, ViewNotebookActivity.class);
             intent.putExtra("paths", paths);
             intent.putExtra("currentPageIndex", currentPageIndex);
+            intent.putExtra("currentUserId", currentUserId);
             startActivity(intent);
         }else {
 //            如果上一级activity是ViewNotebookActivity，则设置result

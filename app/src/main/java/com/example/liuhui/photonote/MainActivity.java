@@ -74,6 +74,9 @@ public class MainActivity extends AppCompatActivity
     private int pptSelectedNumber = 0;
     private int cardSelectedNumber = 0;
 
+    /* 存储当前user的id */
+    private long currentUserId = 0;
+
     private final String TAG = "MainActivity";
 
     @Override
@@ -81,10 +84,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
-                    .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
-                .create().show(this);
-
+        currentUserId = getIntent().getLongExtra("currentUserId", 0);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -412,6 +412,7 @@ public class MainActivity extends AppCompatActivity
                  * 这样就可以在创建一个笔记本的时候，知道这个笔记本的类型
                   * */
                 intent.putExtra("currentPageIndex", currentPageIndex);
+                intent.putExtra("currentUserId", currentUserId);
                 startActivity(intent);
             }
         });
@@ -419,19 +420,16 @@ public class MainActivity extends AppCompatActivity
 
     /* 从数据读入数据的初始化操作 */
     private void initEntry() {
-        /* 从数据库读取notebook */
-        nbs = DataSupport.findAll(Notebook.class);
+        /* 从数据库读取notebook
+        * 当前用户的
+        * */
+        nbs = DataSupport.where("userId == ?", currentUserId+"").find(Notebook.class);
 
         /* 局部变量，用于存储某个Notebook中所有的notes */
         List<Note> notes;
         Note firstNote;
         String path;
         Bitmap bitmap;
-
-        /* 读取数据库中所有的notes */
-        notes = DataSupport.findAll(Note.class);
-        for (Note note: notes)
-            Log.w(TAG, "initEntry: "+note.getNotebookId());
 
         /* 好的，现在读取笔记本 */
         for (Notebook nb: nbs){
@@ -696,6 +694,7 @@ public class MainActivity extends AppCompatActivity
                     Notebook nb = new Notebook(name,date.toString(), currentPageIndex);
                     NoteEntry entry;
                     nb.setId(id);
+                    nb.setUserId(currentUserId);
                     nb.save();
                     switch (currentPageIndex){
                         case 0:
