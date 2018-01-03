@@ -1,8 +1,7 @@
 package com.github.chrisbanes.photoview;
 
 /**
- * Created by 16307110325 Zhu xiaoning
- * on 2018/1/2.
+ * Created by liuhui on 18-1-3.
  */
 
 public interface OnLongPressListener {

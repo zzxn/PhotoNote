@@ -183,8 +183,8 @@ public class PhotoViewAttacher implements View.OnTouchListener,
                     float rx = getDisplayRect().centerX();
                     float ry = getDisplayRect().centerY();
                     // 触摸点相对于图片的相对坐标
-                    float x = (tx + w/2 - rx) / w;
-                    float y = (ty + h/2 - ry) / h;
+                    float x = (tx + w / 2 - rx) / w;
+                    float y = (ty + h / 2 - ry) / h;
                     mOnLongPressListener.onLongPress(x, y);
                 }
             }
@@ -790,7 +790,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
         }
     }
 
-    public void setmOnLongPressListener(OnLongPressListener mOnLongPressListener) {
+    public void setmOnLongPressListener(OnLongPressListener mOnLongPressListener){
         this.mOnLongPressListener = mOnLongPressListener;
     }
 

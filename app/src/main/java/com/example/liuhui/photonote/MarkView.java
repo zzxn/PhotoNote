@@ -16,7 +16,7 @@ import android.widget.Toast;
  * on 2017/12/31.
  */
 
-public class MarkView extends ImageView  {
+public class MarkView extends android.support.v7.widget.AppCompatImageView  {
     private Mark mark;
 
     public Mark getMark() {
