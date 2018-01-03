@@ -1,23 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_dark"
-    android:orientation="vertical">
+    android:background="@android:color/background_dark">
 
     <me.pqpo.smartcropperlib.view.CropImageView
         android:id="@+id/image_crop"
         android:layout_width="match_parent"
-        android:padding="24dp"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:padding="30dp"
+        android:layout_height="match_parent"
         app:civLineColor="@color/colorPrimary"
+        android:layout_marginBottom="80dp"
         app:civMagnifierCrossColor="@color/colorPrimaryDark"/>
 
+    <RelativeLayout
+        android:id="@+id/save_file"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        android:layout_width="108dp"
+        android:layout_height="108dp">
+
+        <com.mingle.widget.LoadingView
+            android:layout_width="108dp"
+            android:layout_height="108dp" />
+
+        <TextView
+            android:layout_width="108dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="@string/onSaving"
+            android:textAlignment="center"
+            android:textColor="@color/darkGreen"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
     <LinearLayout
+        android:layout_alignParentBottom="true"
         android:background="@color/translucentGreen"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -88,4 +110,4 @@
     </LinearLayout>
 
 
-</LinearLayout>
+</RelativeLayout>

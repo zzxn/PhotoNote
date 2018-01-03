@@ -5,18 +5,18 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.litepal.crud.DataSupport;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -74,6 +74,11 @@ public class TakePhotoActivity extends AppCompatActivity {
 //    已保存photo的path
     ArrayList<String> paths = new ArrayList<>();
 
+//    保存文件动画
+    RelativeLayout saveFile;
+
+    private long currentUserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,8 +88,10 @@ public class TakePhotoActivity extends AppCompatActivity {
         /* 如果不是fromViewNotebook
          * 那么获得当前笔记本的类型
           * */
-        if (!fromViewNotebook)
+        if (!fromViewNotebook) {
             currentPageIndex = getIntent().getIntExtra("currentPageIndex", 0);
+            currentUserId = getIntent().getLongExtra("currentUserId", 0);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         /// 一系列前期处理操作
@@ -102,6 +109,8 @@ public class TakePhotoActivity extends AppCompatActivity {
         prePhoto = (ImageView) findViewById(R.id.pre_photo);
 
         photoNumber = (TextView) findViewById(R.id.photo_number);
+
+        saveFile = (RelativeLayout) findViewById(R.id.save_file);
 
         /* 得到数据库中所有的note的数目
          * litepal默认是按照id的大小排序
@@ -131,30 +140,7 @@ public class TakePhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (imageCrop.canRightCrop() && !alreadySaved && !alreadyDropped){
-                    photoNumber.setVisibility(View.VISIBLE);
-                    alreadySaved = true;
-                    Bitmap bitmap = imageCrop.crop();
-
-                    try {
-                        /* 这里只是暂时保存photo到本地
-                         * 并没有将数据保存到数据库中
-                         * 相应的path是可以在下一次被覆盖的
-                          * */
-                        File savedPhoto = new File(getExternalFilesDir("img"), "saved"+index+".jpg");
-                        paths.add(savedPhoto.getAbsolutePath());
-                        index++;
-                        count++;
-                        FileOutputStream fos = new FileOutputStream(savedPhoto);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-                        fos.flush();
-                        fos.close();
-                    }catch (IOException e){
-                        e.printStackTrace();
-                    }
-
-                    prePhoto.setImageBitmap(bitmap);
-                    photoNumber.setText(count+"");
-                    Toast.makeText(TakePhotoActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+                    new SaveTask().execute();
                 }
                 else if (alreadySaved)
                     Toast.makeText(TakePhotoActivity.this, "已经保存", Toast.LENGTH_SHORT).show();
@@ -192,6 +178,7 @@ public class TakePhotoActivity extends AppCompatActivity {
             Intent intent = new Intent(TakePhotoActivity.this, ViewNotebookActivity.class);
             intent.putExtra("paths", paths);
             intent.putExtra("currentPageIndex", currentPageIndex);
+            intent.putExtra("currentUserId", currentUserId);
             startActivity(intent);
         }else {
 //            如果上一级activity是ViewNotebookActivity，则设置result
@@ -302,5 +289,53 @@ public class TakePhotoActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private class SaveTask extends AsyncTask<Void, Integer, Bitmap>{
+
+        /* 初始化操作 */
+        @Override
+        protected void onPreExecute() {
+            saveFile.setVisibility(View.VISIBLE);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... voids) {
+            alreadySaved = true;
+            Bitmap bitmap = imageCrop.crop();
+
+            try {
+                /* 这里只是暂时保存photo到本地
+                * 并没有将数据保存到数据库中
+                * 相应的path是可以在下一次被覆盖的
+                * */
+                File savedPhoto = new File(getExternalFilesDir("img"), "saved"+index+".jpg");
+                paths.add(savedPhoto.getAbsolutePath());
+                index++;
+                count++;
+                FileOutputStream fos = new FileOutputStream(savedPhoto);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                fos.flush();
+                fos.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            saveFile.setVisibility(View.INVISIBLE);
+            photoNumber.setVisibility(View.VISIBLE);
+            prePhoto.setImageBitmap(bitmap);
+            photoNumber.setText(count+"");
+            super.onPostExecute(bitmap);
+        }
     }
 }

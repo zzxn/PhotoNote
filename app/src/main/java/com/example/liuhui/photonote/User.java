@@ -1,5 +1,4 @@
 package com.example.liuhui.photonote;
-
 import android.widget.EditText;
 
 import org.litepal.crud.DataSupport;
@@ -16,11 +15,11 @@ public class User  extends DataSupport {
     private long id;
     private String username;
     private String password;
-
+  
     public User(String username, String password) {
         this.username = username;
         this.password = password;
-        setId(this.getBaseObjId());
+        this.setId(this.getBaseObjId());
     }
 
     public String getUsername() {

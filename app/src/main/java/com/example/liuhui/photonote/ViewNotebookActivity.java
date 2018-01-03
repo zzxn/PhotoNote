@@ -58,6 +58,8 @@ public class ViewNotebookActivity extends AppCompatActivity {
 
     private long id = 0;
 
+    private long currentUserId = 0;
+
     private int type = 0;
 
     private String name = "";
@@ -78,6 +80,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
         if (!fromMain){
             paths = getIntent().getStringArrayListExtra("paths");
             type = getIntent().getIntExtra("currentPageIndex", 0);
+            currentUserId = getIntent().getIntExtra("currentUserId", 0);
             name = "新笔记";
 
             /* 将这个新建的notebook保存 */
@@ -85,6 +88,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
             Date date = new Date();
             notebook.setName(name);
             notebook.setType(type);
+            notebook.setUserId(currentUserId);
             notebook.setDate(date.toString());
 
             /* 为了设置notebook的id

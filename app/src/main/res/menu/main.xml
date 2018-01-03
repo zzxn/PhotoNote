@@ -5,6 +5,7 @@
         android:id="@+id/new_notebook"
         android:title="@string/new_notebook"
         app:showAsAction="never"/>
+
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
