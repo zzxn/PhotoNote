@@ -9,6 +9,9 @@ public class Note extends DataSupport implements Parcelable {
 
     /* photo保存的路径 */
     private String path;
+
+    private String mark;
+
     /* 笔记所属notebook的id */
     private long notebookId;
 
@@ -81,4 +84,12 @@ public class Note extends DataSupport implements Parcelable {
             return new Note[size];
         }
     };
+
+    public String getMark() {
+        return mark;
+    }
+
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
 }

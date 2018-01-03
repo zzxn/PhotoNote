@@ -20,7 +20,9 @@ import android.widget.Toast;
 
 import org.litepal.crud.DataSupport;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -176,8 +178,9 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 bundle.putParcelableArrayList("notes", databaseNotes);
                 intent.putExtras(bundle);
                 intent.putExtra("currentIndex", i);
-                intent.putExtra("paths", paths);
-                Log.w(TAG, "onItemClick: put extra note");
+                for (Note note:databaseNotes){
+                    Log.w(TAG, "past note's path "+note.getPath());
+                }
                 startActivity(intent);
             }
         });
@@ -228,13 +231,10 @@ public class ViewNotebookActivity extends AppCompatActivity {
 
                             /* 现在删除数据库中的note和其中存储的marks */
                             Note note = databaseNotes.remove(i);
-                            long noteId = note.getId();
                             /* 删除note */
                             if (note.isSaved()) {
                                 Log.w(TAG, "onClick: delete a note and it's marks");
                                 note.delete();
-                                /* 删除与之关联的marks */
-                                DataSupport.deleteAll(Mark.class, "noteId = ?", noteId + "");
                             }
                             i--;
                             selectedNoteNumber--;

@@ -17,4 +17,17 @@
             android:title="@string/card"/>
     </group>
 
+    <item android:title="其他">
+        <menu>
+            <item
+                android:id="@+id/signout"
+                android:icon="@drawable/ic_signout"
+                android:title="登出"/>
+            <item
+                android:id="@+id/setting"
+                android:icon="@drawable/ic_settings"
+                android:title="设置"/>
+        </menu>
+    </item>
+
 </menu>

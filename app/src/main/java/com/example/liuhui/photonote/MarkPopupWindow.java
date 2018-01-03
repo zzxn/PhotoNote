@@ -1,8 +1,6 @@
 package com.example.liuhui.photonote;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -19,41 +16,44 @@ import android.widget.Toast;
   */
 
 public class MarkPopupWindow extends PopupWindow {
-    private Context context;
     private View view;
     private Button editBtn;
+    private Button deleteBtn;
     private EditText editText;
-    private Mark mark;
+    private Note mNote;
     private static String TAG = "MarkPopupWindow";
 
-    public MarkPopupWindow(final Context context, final Mark mark) {
-            this.view = LayoutInflater.from(context).inflate(R.layout.mark_pop, null);
-            this.mark = mark;
-            editBtn = view.findViewById(R.id.edit_btn);
-            editText = view.findViewById(R.id.edit_text);
-        
-            editBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    // 可编辑状态，点击进行保存
-                    if (editText.isEnabled()) {
-                        mark.setMess(editText.getText().toString());
-                        editText.setEnabled(false);
-                        editBtn.setText(R.string.edit);
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mark.update(mark.getId());
-                            }
-                        }).start();
-                        Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show();
-                    }
-                    // 不可编辑（观察）状态
-                    else {
-                        editText.setEnabled(true);
-                        editBtn.setText(R.string.save);
-                    }
+    public MarkPopupWindow(final Context context, Note note) {
+        this.view = LayoutInflater.from(context).inflate(R.layout.mark_pop, null);
+        this.mNote = note;
+        editBtn = view.findViewById(R.id.edit_btn);
+        deleteBtn = view.findViewById(R.id.del_btn);
+        editText = view.findViewById(R.id.edit_text);
+        editText.setText(note.getMark());
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 可编辑状态，点击进行保存
+                if (editText.isEnabled()) {
+                    mNote.setMark(editText.getText().toString());
+                    editText.setEnabled(false);
+                    editBtn.setText(R.string.edit);
+                    mNote.save();
                 }
+                // 不可编辑（观察）状态
+                else {
+                    editText.setEnabled(true);
+                    editBtn.setText(R.string.save);
+                }
+            }
+        });
+        deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mNote.setMark("");
+                editText.setText("");
+                dismiss();
+            }
         });
 
         // 设置外部可点击，并当点击操作区域外面的时候，保存并退出
@@ -65,25 +65,12 @@ public class MarkPopupWindow extends PopupWindow {
                 int y = (int) motionEvent.getY();
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     if (y < h) {
+                        mNote.setMark(editText.getText().toString());
+                        mNote.save();
                         dismiss();
                     }
                 }
                 return true;
-            }
-        });
-        
-        // dismiss时保存
-        setOnDismissListener(new OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                mark.setMess(editText.getText().toString());
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mark.update(mark.getId());
-                    }
-                }).start();
-                Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show();
             }
         });
         
@@ -96,9 +83,6 @@ public class MarkPopupWindow extends PopupWindow {
         
         // 设置弹出窗体可点击
         this.setFocusable(true);
-    }
-
-    public Mark getMark() {
-        return mark;
+        this.setAnimationStyle(R.style.pop_window_anim);
     }
 }
