@@ -1,35 +1,35 @@
 -- Merging decision tree log ---
 manifest
-ADDED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:1-4:12
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:1-4:12
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:1-4:12
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:1-4:12
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:1-4:12
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:1-4:12
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:1-4:12
+ADDED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:1-4:12
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:1-4:12
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:1-4:12
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:1-4:12
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:1-4:12
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:1-4:12
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:1-4:12
 	package
-		ADDED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:11-52
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
+		ADDED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:11-52
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
 	android:versionName
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-		ADDED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:1-4:12
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+		ADDED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:1-4:12
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
 	android:versionCode
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-		ADDED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml:2:1-4:12
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+		ADDED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml:2:1-4:12
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
 uses-sdk
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-		ADDED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+		ADDED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-		ADDED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
-		INJECTED from E:\Android\AndroidStudioProjects\PhotoNote\photoview\src\main\AndroidManifest.xml
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+		ADDED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
+		INJECTED from /home/liuhui/AndroidStudioProjects/PhotoNote/photoview/src/main/AndroidManifest.xml
