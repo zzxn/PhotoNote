@@ -2,6 +2,7 @@ package com.example.liuhui.photonote;
 
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -13,78 +14,118 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.OnLongPressListener;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ViewNoteActivity extends AppCompatActivity {
 
     private static final String TAG = "ViewNoteActivity";
-    private ArrayList<String> paths;
 
-    private int currentIndex = 0;
     private ArrayList<Note> notes = new ArrayList<>();
-
-    static {
-        Mark.deleteAll(Mark.class);
-        Mark mark = new Mark(0.5, 0.5, 1, "one：测试mark文字");
-        mark.save();
-        Mark mark1 = new Mark(0.3, 0.7, 1, "two：测试mark文字");
-        mark1.save();
-    }
-
-    private static ArrayList<View> containers = new ArrayList<>();
+    private ArrayList<View> containers = new ArrayList<>();
+    private Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_note);
-
-        paths = getIntent().getStringArrayListExtra("paths");
-        currentIndex= getIntent().getIntExtra("currentIndex", 0);
         notes = getIntent().getParcelableArrayListExtra("notes");
-        Toast.makeText(ViewNoteActivity.this,
-                currentIndex+ "/"+ notes.size(), Toast.LENGTH_SHORT).show();
-
         LayoutInflater inflater = getLayoutInflater();
-        for (int i = 0; i < paths.size(); i++) {
-            Log.d(TAG, "onCreate: paths:" + paths.get(i));
-            View container = inflater.inflate(R.layout.photo_view_container, null);
+        for (int i = 0; i < notes.size(); i++) {
+            final Note note = notes.get(i);
+            // get container
+            final View container = inflater.inflate(R.layout.photo_view_container, null);
 
+            // set photoview
             final PhotoView photoView = container.findViewById(R.id.photo_view);
-            photoView.setImageBitmap(BitmapFactory.decodeFile(paths.get(i)));
+            photoView.setImageBitmap(BitmapFactory.decodeFile(note.getPath()));
+            photoView.setOnLongPressListener(new OnLongPressListener() {
+                @Override
+                public void onLongPress(float x, float y) {
+                    RectF rectF = photoView.getDisplayRect();
+                    float ox = rectF.centerX() - rectF.width()/2;
+                    float oy = rectF.centerY() - rectF.height()/2;
+                    float absX = ox + rectF.width() * x;
+                    float absY = oy + rectF.height() * y;
+                    final Mark newMark = new Mark(x, y, note.getId(), "");
+                    newMark.save();
+                    FrameLayout mark_layer = container.findViewById(R.id.mark_layer);
+                    final MarkView markView = new MarkView(mark_layer.getContext(), mark_layer, newMark);
 
-            if (i == 0) {
-                FrameLayout mark_layer = container.findViewById(R.id.mark_layer);
-//                ImageView mark = new ImageView(mark_layer.getContext());
-//                mark.setImageResource(R.drawable.ic_mark);
-//                mark.setX(200);
-//                mark.setY(200);
+                    markView.setX(absX);
+                    markView.setY(absY);
+                    mark_layer.addView(markView);
+//                     监控图片位置变化，使得Mark位置随之改变
+                    new Thread(new Runnable() {
+                        private float oldX;
+                        private float oldY;
+                        @Override
+                        public void run() {
+                            while (true) {
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // todo 优化多线程，避免不必要的界面更新
+                                        RectF rectF = photoView.getDisplayRect();
+                                        float ox = rectF.centerX() - rectF.width() / 2;
+                                        float oy = rectF.centerY() - rectF.height() / 2;
+                                        float x = ox + rectF.width() * newMark.getX();
+                                        float y = oy + rectF.height() * newMark.getY();
+                                        if (oldX != x || oldY != y) {
+                                            oldX = x;
+                                            oldY = y;
+                                            markView.setTranslationX(x);
+                                            markView.setTranslationY(y);
+                                        }
+                                    }
+                                });
+                                try {
+                                    Thread.sleep(20);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }).start();
+                }
+            });
 
-                Mark mark = new Mark(0.5, 0.5, 1, "one：测试mark文字");
+            // set mark
+            FrameLayout mark_layer = container.findViewById(R.id.mark_layer);
+            List<Mark> marks = Mark.where("noteid = ?", Long.toString(note.getId())).find(Mark.class);
+            RectF rectF = photoView.getDisplayRect();
+            for (final Mark mark : marks) {
                 final MarkView markView = new MarkView(mark_layer.getContext(), mark_layer, mark);
+                float ox = rectF.centerX() - rectF.width()/2;
+                float oy = rectF.centerY() - rectF.height()/2;
+                float x = ox + rectF.width() * mark.getX();
+                float y = oy + rectF.height() * mark.getY();
+                markView.setX(x);
+                markView.setY(y);
                 mark_layer.addView(markView);
-
+                // 监控图片位置变化，使得Mark位置随之改变
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                         while (true) {
-                            RectF rectF = photoView.getDisplayRect();
-                            float x = rectF.centerX();
-                            float y = rectF.centerY();
-                            float w = rectF.width();
-                            float h = rectF.height();
-                            final float ox = x - w/2;
-                            final float oy = y - h/2;
-                            markView.post(new Runnable() {
+                            handler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    markView.setX(ox);
-                                    markView.setY(oy);
+                                    // todo 优化多线程，避免不必要的界面更新
+                                    RectF rectF = photoView.getDisplayRect();
+                                    float ox = rectF.centerX() - rectF.width()/2;
+                                    float oy = rectF.centerY() - rectF.height()/2;
+                                    float x = ox + rectF.width() * mark.getX();
+                                    float y = oy + rectF.height() * mark.getY();
+                                    markView.setX(x);
+                                    markView.setY(y);
                                 }
                             });
                             try {
-                                Thread.sleep(50);
+                                Thread.sleep(20);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -92,14 +133,16 @@ public class ViewNoteActivity extends AppCompatActivity {
                     }
                 }).start();
             }
+
             containers.add(container);
         }
+
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         PagerAdapter pagerAdapter = new PagerAdapter() {
             @Override
             public int getCount() {
-                return paths.size();
+                return notes.size();
             }
 
             @Override
@@ -109,13 +152,8 @@ public class ViewNoteActivity extends AppCompatActivity {
 
             @Override
             public Object instantiateItem(ViewGroup container, int position) {
-//                PhotoView photoView = new PhotoView(container.getContext());
-//                photoView.setPos(position);
-//                photoView.setImageBitmap(BitmapFactory.decodeFile(paths.get(position)));
-//                container.addView(photoView, ViewPager.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT);
                 container.addView(containers.get(position),
                         ViewPager.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT);
-//                return photoView;
                 return containers.get(position);
             }
             @Override
@@ -124,5 +162,6 @@ public class ViewNoteActivity extends AppCompatActivity {
             }
         };
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setCurrentItem(getIntent().getIntExtra("currentIndex", 0));
     }
 }

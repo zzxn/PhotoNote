@@ -28,6 +28,19 @@
                     android:textColor="@color/colorAccent"
                     android:layout_margin="5dp"/>
                 <Button
+                    android:id="@+id/del_btn"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/translucentGray"
+                    android:text="@string/delete"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    android:layout_height="wrap_content"/>
+                <View
+                    android:layout_width="0.1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorAccent" />
+                <Button
                     android:id="@+id/edit_btn"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -48,6 +61,7 @@
                 android:id="@+id/edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textCursorDrawable="@color/white"
                 android:scrollbars="vertical"
                 android:singleLine="false"
                 android:minLines="5"
