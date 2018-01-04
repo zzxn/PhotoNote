@@ -1,6 +1,7 @@
 package com.example.liuhui.photonote;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -90,6 +91,8 @@ public class MarkPopupWindow extends PopupWindow {
 
         // 设置弹出窗体可点击
         this.setFocusable(true);
+        this.setBackgroundDrawable(new ColorDrawable(0x00000000));
+        this.setAnimationStyle(R.style.pop_window_anim);
     }
 
     public void setOnDismiss(View.OnClickListener onDismiss) {

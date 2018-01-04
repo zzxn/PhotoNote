@@ -55,8 +55,8 @@ public class ViewNoteActivity extends AppCompatActivity {
                     FrameLayout mark_layer = container.findViewById(R.id.mark_layer);
                     final MarkView markView = new MarkView(mark_layer.getContext(), mark_layer, newMark);
 
-                    markView.setX(absX);
-                    markView.setY(absY);
+                    markView.setX(absX - markView.getWidth()/2);
+                    markView.setY(absY - markView.getHeight());
                     mark_layer.addView(markView);
 //                     监控图片位置变化，使得Mark位置随之改变
                     new Thread(new Runnable() {
@@ -68,7 +68,6 @@ public class ViewNoteActivity extends AppCompatActivity {
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        // todo 优化多线程，避免不必要的界面更新
                                         RectF rectF = photoView.getDisplayRect();
                                         float ox = rectF.centerX() - rectF.width() / 2;
                                         float oy = rectF.centerY() - rectF.height() / 2;
@@ -77,8 +76,8 @@ public class ViewNoteActivity extends AppCompatActivity {
                                         if (oldX != x || oldY != y) {
                                             oldX = x;
                                             oldY = y;
-                                            markView.setTranslationX(x);
-                                            markView.setTranslationY(y);
+                                            markView.setTranslationX(x - markView.getWidth()/2);
+                                            markView.setTranslationY(y - markView.getHeight());
                                         }
                                     }
                                 });
@@ -116,7 +115,6 @@ public class ViewNoteActivity extends AppCompatActivity {
                             handler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    // todo 优化多线程，避免不必要的界面更新
                                     RectF rectF = photoView.getDisplayRect();
                                     float ox = rectF.centerX() - rectF.width()/2;
                                     float oy = rectF.centerY() - rectF.height()/2;
@@ -125,8 +123,8 @@ public class ViewNoteActivity extends AppCompatActivity {
                                     if (oldX != x || oldY != y) {
                                         oldX = x;
                                         oldY = y;
-                                        markView.setTranslationX(x);
-                                        markView.setTranslationY(y);
+                                        markView.setTranslationX(x - markView.getWidth()/2);
+                                        markView.setTranslationY(y - markView.getHeight());
                                     }
                                 }
                             });
