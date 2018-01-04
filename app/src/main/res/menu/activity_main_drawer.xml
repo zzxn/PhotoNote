@@ -15,19 +15,15 @@
             android:id="@+id/card_menu"
             android:icon="@drawable/ic_menu_card"
             android:title="@string/card"/>
+        <item
+            android:id="@+id/sign_out"
+            android:icon="@drawable/ic_sign_out"
+            android:title="@string/sign_out"/>
+        <item
+            android:checkable="false"
+            android:id="@+id/user"
+            android:icon="@drawable/ic_user"
+            android:title="@string/show_username"/>
     </group>
-
-    <item android:title="其他">
-        <menu>
-            <item
-                android:id="@+id/sign_out"
-                android:icon="@drawable/ic_sign_out"
-                android:title="登出"/>
-            <item
-                android:id="@+id/user"
-                android:icon="@drawable/ic_user"
-                android:title="显示用户名"/>
-        </menu>
-    </item>
 
 </menu>

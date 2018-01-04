@@ -111,7 +111,10 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        List<User> user = DataSupport.where("id = ?", currentUserId+"").find(User.class);
         navigationView.getMenu().getItem(0).setChecked(true);
+        /* 设置用户名 */
+        navigationView.getMenu().getItem(4).setTitle(user.get(0).getUsername());
 
         // setViewPager
         setViewPager();
@@ -666,8 +669,6 @@ public class MainActivity extends AppCompatActivity
                 MainActivity.this.finish();
                 break;
             case R.id.user:
-                List<User> user = DataSupport.where("id = ?", currentUserId+"").find(User.class);
-                item.setTitle(user.get(0).getUsername());
                 break;
             default:
                 break;
