@@ -1,4 +1,4 @@
-package com.example.liuhui.photonote;
+package com.example.liuhui.photonote.model;
 
 import org.litepal.crud.DataSupport;
 
@@ -23,7 +23,7 @@ public class Notebook extends DataSupport {
     private long userId;
 
     /* 构造器 */
-    public Notebook(String name, String date, int type){
+    public Notebook(String name, String date, int type) {
         this.name = name;
         this.date = date;
         this.type = type;

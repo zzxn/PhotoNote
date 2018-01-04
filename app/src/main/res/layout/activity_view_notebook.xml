@@ -21,7 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="DisableBaselineAlignment">
-        
+
         <GridView
             android:id="@+id/note_grid_view"
             android:layout_width="match_parent"

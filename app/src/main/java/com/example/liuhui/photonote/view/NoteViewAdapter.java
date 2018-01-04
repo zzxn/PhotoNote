@@ -1,9 +1,8 @@
-package com.example.liuhui.photonote;
+package com.example.liuhui.photonote.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,13 +10,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.liuhui.photonote.R;
+
 import java.util.List;
 
 class NoteViewAdapter extends ArrayAdapter<NoteView> {
 
     private int resourceId;
 
-    NoteViewAdapter(Context context, int listItemResourceId, List<NoteView> noteViews){
+    NoteViewAdapter(Context context, int listItemResourceId, List<NoteView> noteViews) {
         super(context, listItemResourceId, noteViews);
         resourceId = listItemResourceId;
     }
@@ -35,16 +36,15 @@ class NoteViewAdapter extends ArrayAdapter<NoteView> {
             viewHolder.noteNumber = view.findViewById(R.id.note_number);
             viewHolder.noteIsSelected = view.findViewById(R.id.note_is_selected);
             view.setTag(viewHolder);
-        }
-        else {
+        } else {
             view = convertView;
             viewHolder = (ViewHolder) view.getTag();
         }
 
         if (noteView != null) {
             viewHolder.notePhoto.setImageBitmap(noteView.getNotePhoto());
-            viewHolder.noteNumber.setText(noteView.getNoteNumber()+"");
-            viewHolder.noteIsSelected.setVisibility((noteView.isSelected())?View.VISIBLE:View.INVISIBLE);
+            viewHolder.noteNumber.setText(noteView.getNoteNumber() + "");
+            viewHolder.noteIsSelected.setVisibility((noteView.isSelected()) ? View.VISIBLE : View.INVISIBLE);
         }
 
         return view;

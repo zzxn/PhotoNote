@@ -6,17 +6,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.liuhui.photonote.model.Note;
+
 import org.litepal.crud.DataSupport;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,57 +29,40 @@ import java.util.List;
 import me.pqpo.smartcropperlib.view.CropImageView;
 
 public class TakePhotoActivity extends AppCompatActivity {
-    private int REQUEST_CODE_TAKE_PHOTO = 1;
-
     private final String TAG = "TakePhotoActivity";
-
-//    用于裁剪photo的对象
+    //    用于裁剪photo的对象
     CropImageView imageCrop;
-
-//    保存photo的临时文件
+    //    保存photo的临时文件
     File tempFile;
-
-//    拍摄photo的image view
+    //    拍摄photo的image view
     ImageView takePhoto;
-
-//    保存photo的image view
+    //    保存photo的image view
     ImageView save;
-
-//    丢弃当前拍摄photo的image view
+    //    丢弃当前拍摄photo的image view
     ImageView drop;
-
-//    退出当前activity，进入view notebook activity的image view
+    //    退出当前activity，进入view notebook activity的image view
     ImageView exit;
-
-//    显示保存过的photo的image view
+    //    显示保存过的photo的image view
     ImageView prePhoto;
-
-//    当前已经保存过的photo的数量
+    //    当前已经保存过的photo的数量
     TextView photoNumber;
-
-//    指示当前photo是否已经保存
+    //    指示当前photo是否已经保存
     boolean alreadySaved = false;
-
-//    指示当前photo是否已经丢弃
+    //    指示当前photo是否已经丢弃
     boolean alreadyDropped = false;
-
-//    指示当前photo的索引
+    //    指示当前photo的索引
     int index = 1;
-//    当前已经保存的photo的数量
+    //    当前已经保存的photo的数量
     int count = 0;
-
-//    指示上一级activity是否为ViewNotebookActivity
+    //    指示上一级activity是否为ViewNotebookActivity
     boolean fromViewNotebook = false;
-
-//    如果上一级activity是MainActivity，currentPageIndex指示当前笔记本的类型
+    //    如果上一级activity是MainActivity，currentPageIndex指示当前笔记本的类型
     int currentPageIndex = 0;
-
-//    已保存photo的path
+    //    已保存photo的path
     ArrayList<String> paths = new ArrayList<>();
-
-//    保存文件动画
+    //    保存文件动画
     RelativeLayout saveFile;
-
+    private int REQUEST_CODE_TAKE_PHOTO = 1;
     private long currentUserId;
 
     @Override
@@ -118,7 +104,7 @@ public class TakePhotoActivity extends AppCompatActivity {
           * */
         List<Note> notes = DataSupport.findAll(Note.class);
         if (notes.size() > 0)
-            index = (int)(notes.get(notes.size()-1).getId()+1);
+            index = (int) (notes.get(notes.size() - 1).getId() + 1);
 
         tempFile = new File(getExternalFilesDir("img"), "temp.jpg");
         /// 前期处理操作完毕
@@ -139,10 +125,9 @@ public class TakePhotoActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (imageCrop.canRightCrop() && !alreadySaved && !alreadyDropped){
+                if (imageCrop.canRightCrop() && !alreadySaved && !alreadyDropped) {
                     new SaveTask().execute();
-                }
-                else if (alreadySaved)
+                } else if (alreadySaved)
                     Toast.makeText(TakePhotoActivity.this, "已经保存", Toast.LENGTH_SHORT).show();
                 else if (alreadyDropped)
                     Toast.makeText(TakePhotoActivity.this, "早已丢弃", Toast.LENGTH_SHORT).show();
@@ -174,8 +159,8 @@ public class TakePhotoActivity extends AppCompatActivity {
     /**
      * turnToViewNotebook 从当前activity转到viewNotebookActivity
      */
-    private void turnToViewNotebook(){
-        if(!fromViewNotebook) {
+    private void turnToViewNotebook() {
+        if (!fromViewNotebook) {
 //            如果上一级activity是MainActivity，则启动ViewNotebookActivity
 //            将paths和currentPageIndex传给ViewNotebookActivity
             Intent intent = new Intent(TakePhotoActivity.this, ViewNotebookActivity.class);
@@ -183,7 +168,7 @@ public class TakePhotoActivity extends AppCompatActivity {
             intent.putExtra("currentPageIndex", currentPageIndex);
             intent.putExtra("currentUserId", currentUserId);
             startActivity(intent);
-        }else {
+        } else {
 //            如果上一级activity是ViewNotebookActivity，则设置result
 //            将新的paths传给ViewNotebookActivity
             Intent intent = new Intent();
@@ -198,7 +183,7 @@ public class TakePhotoActivity extends AppCompatActivity {
     /**
      * startCamera 启动相机，并将tempFile的uri传入
      */
-    private void startCamera(){
+    private void startCamera() {
         alreadySaved = false;
         alreadyDropped = false;
         Intent startCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -209,16 +194,16 @@ public class TakePhotoActivity extends AppCompatActivity {
     }
 
     /**
-     * @param requestCode  请求代码
-     * @param resultCode 结果代码
-     * @param data 返回数据
-     *             把tempFile中的图片文件解析成bitmap
-     *             然后调用CropImageView的setImageToCrop函数
+     * @param requestCode 请求代码
+     * @param resultCode  结果代码
+     * @param data        返回数据
+     *                    把tempFile中的图片文件解析成bitmap
+     *                    然后调用CropImageView的setImageToCrop函数
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK){
+        if (resultCode != RESULT_OK) {
             setResult(RESULT_CANCELED);
             finish();
         }
@@ -262,7 +247,7 @@ public class TakePhotoActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         if (!fromViewNotebook)
             builder.setTitle("创建新笔记本").setMessage("是否为拍摄的照片创建新笔记本？");
@@ -270,11 +255,11 @@ public class TakePhotoActivity extends AppCompatActivity {
             builder.setTitle("保存当前笔记").setMessage("是否保存当前拍摄的笔记？");
 
         builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        turnToViewNotebook();
-                    }
-                })
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                turnToViewNotebook();
+            }
+        })
                 .setNegativeButton("否", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -294,7 +279,7 @@ public class TakePhotoActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private class SaveTask extends AsyncTask<Void, Integer, Bitmap>{
+    private class SaveTask extends AsyncTask<Void, Integer, Bitmap> {
 
         /* 初始化操作 */
         @Override
@@ -313,15 +298,15 @@ public class TakePhotoActivity extends AppCompatActivity {
                 * 并没有将数据保存到数据库中
                 * 相应的path是可以在下一次被覆盖的
                 * */
-                File savedPhoto = new File(getExternalFilesDir("img"), "saved"+index+".jpg");
+                File savedPhoto = new File(getExternalFilesDir("img"), "saved" + index + ".jpg");
                 paths.add(savedPhoto.getAbsolutePath());
                 index++;
                 count++;
                 FileOutputStream fos = new FileOutputStream(savedPhoto);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 50, fos);
                 fos.flush();
                 fos.close();
-            }catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             return bitmap;
@@ -337,7 +322,7 @@ public class TakePhotoActivity extends AppCompatActivity {
             saveFile.setVisibility(View.INVISIBLE);
             photoNumber.setVisibility(View.VISIBLE);
             prePhoto.setImageBitmap(bitmap);
-            photoNumber.setText(count+"");
+            photoNumber.setText(count + "");
             super.onPostExecute(bitmap);
         }
     }

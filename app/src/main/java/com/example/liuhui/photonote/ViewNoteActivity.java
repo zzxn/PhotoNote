@@ -2,18 +2,19 @@ package com.example.liuhui.photonote;
 
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
+import com.example.liuhui.photonote.model.Mark;
+import com.example.liuhui.photonote.model.Note;
+import com.example.liuhui.photonote.view.MarkView;
 import com.github.chrisbanes.photoview.OnLongPressListener;
 import com.github.chrisbanes.photoview.PhotoView;
 
@@ -46,8 +47,8 @@ public class ViewNoteActivity extends AppCompatActivity {
                 @Override
                 public void onLongPress(float x, float y) {
                     RectF rectF = photoView.getDisplayRect();
-                    float ox = rectF.centerX() - rectF.width()/2;
-                    float oy = rectF.centerY() - rectF.height()/2;
+                    float ox = rectF.centerX() - rectF.width() / 2;
+                    float oy = rectF.centerY() - rectF.height() / 2;
                     float absX = ox + rectF.width() * x;
                     float absY = oy + rectF.height() * y;
                     final Mark newMark = new Mark(x, y, note.getId(), "");
@@ -55,13 +56,14 @@ public class ViewNoteActivity extends AppCompatActivity {
                     FrameLayout mark_layer = container.findViewById(R.id.mark_layer);
                     final MarkView markView = new MarkView(mark_layer.getContext(), mark_layer, newMark);
 
-                    markView.setX(absX - markView.getWidth()/2);
+                    markView.setX(absX - markView.getWidth() / 2);
                     markView.setY(absY - markView.getHeight());
                     mark_layer.addView(markView);
 //                     监控图片位置变化，使得Mark位置随之改变
                     new Thread(new Runnable() {
                         private float oldX;
                         private float oldY;
+
                         @Override
                         public void run() {
                             while (true) {
@@ -76,7 +78,7 @@ public class ViewNoteActivity extends AppCompatActivity {
                                         if (oldX != x || oldY != y) {
                                             oldX = x;
                                             oldY = y;
-                                            markView.setTranslationX(x - markView.getWidth()/2);
+                                            markView.setTranslationX(x - markView.getWidth() / 2);
                                             markView.setTranslationY(y - markView.getHeight());
                                         }
                                     }
@@ -98,8 +100,8 @@ public class ViewNoteActivity extends AppCompatActivity {
             RectF rectF = photoView.getDisplayRect();
             for (final Mark mark : marks) {
                 final MarkView markView = new MarkView(mark_layer.getContext(), mark_layer, mark);
-                float ox = rectF.centerX() - rectF.width()/2;
-                float oy = rectF.centerY() - rectF.height()/2;
+                float ox = rectF.centerX() - rectF.width() / 2;
+                float oy = rectF.centerY() - rectF.height() / 2;
                 float x = ox + rectF.width() * mark.getX();
                 float y = oy + rectF.height() * mark.getY();
                 markView.setX(x);
@@ -109,6 +111,7 @@ public class ViewNoteActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     private float oldX;
                     private float oldY;
+
                     @Override
                     public void run() {
                         while (true) {
@@ -116,14 +119,14 @@ public class ViewNoteActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     RectF rectF = photoView.getDisplayRect();
-                                    float ox = rectF.centerX() - rectF.width()/2;
-                                    float oy = rectF.centerY() - rectF.height()/2;
+                                    float ox = rectF.centerX() - rectF.width() / 2;
+                                    float oy = rectF.centerY() - rectF.height() / 2;
                                     float x = ox + rectF.width() * mark.getX();
                                     float y = oy + rectF.height() * mark.getY();
                                     if (oldX != x || oldY != y) {
                                         oldX = x;
                                         oldY = y;
-                                        markView.setTranslationX(x - markView.getWidth()/2);
+                                        markView.setTranslationX(x - markView.getWidth() / 2);
                                         markView.setTranslationY(y - markView.getHeight());
                                     }
                                 }
@@ -160,6 +163,7 @@ public class ViewNoteActivity extends AppCompatActivity {
                         ViewPager.LayoutParams.MATCH_PARENT, ViewPager.LayoutParams.MATCH_PARENT);
                 return containers.get(position);
             }
+
             @Override
             public void destroyItem(ViewGroup container, int position, Object object) {
                 container.removeView((View) object);

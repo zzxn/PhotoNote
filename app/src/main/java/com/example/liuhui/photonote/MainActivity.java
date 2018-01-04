@@ -5,46 +5,53 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.example.liuhui.photonote.model.Note;
+import com.example.liuhui.photonote.model.Notebook;
+import com.example.liuhui.photonote.model.User;
+import com.example.liuhui.photonote.view.NoteEntry;
+import com.example.liuhui.photonote.view.NoteEntryAdapter;
+
 import org.litepal.crud.DataSupport;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
+
 import site.gemus.openingstartanimation.OpeningStartAnimation;
 import site.gemus.openingstartanimation.RedYellowBlueDrawStrategy;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private final String TAG = "MainActivity";
     private View text_tab, ppt_tab, card_tab;
     private List<View> tabViewList = new ArrayList<>();
     private Toolbar toolbar;
@@ -55,38 +62,28 @@ public class MainActivity extends AppCompatActivity
     private NoteEntryAdapter textAdapter;
     private NoteEntryAdapter pptAdapter;
     private NoteEntryAdapter cardAdapter;
-
     /* 当前页面的索引 */
     private int currentPageIndex = 0;
-
     /* 与adapter相对应的ListView */
     private ListView textListView;
     private ListView pptListView;
     private ListView cardListView;
-
     /* 所有从数据库中读出来的Notebook */
     private List<Notebook> nbs;
-
     /* 三种不同type的NoteEntry */
     private List<NoteEntry> textNoteEntryList = new ArrayList<>();
     private List<NoteEntry> pptNoteEntryList = new ArrayList<>();
     private List<NoteEntry> cardNoteEntryList = new ArrayList<>();
-
     /* 三种不同type的notebook */
     private ArrayList<Notebook> textNbs = new ArrayList<>();
     private ArrayList<Notebook> pptNbs = new ArrayList<>();
     private ArrayList<Notebook> cardNbs = new ArrayList<>();
-
     /* 三种不同type的notebook被选择的个数 */
     private int textSelectedNumber = 0;
     private int pptSelectedNumber = 0;
     private int cardSelectedNumber = 0;
-
     /* 存储当前user的id */
     private long currentUserId = 0;
-
-    private final String TAG = "MainActivity";
-
     private ImageView headPortrait;
     private SharedPreferences.Editor write;
     private String path;
@@ -98,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         boolean directStart = getIntent().getBooleanExtra("directStart", false);
-        if(directStart)
+        if (directStart)
             new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
                     .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
                     .create().show(this);
@@ -126,7 +123,7 @@ public class MainActivity extends AppCompatActivity
         headPortrait = navigationView.getHeaderView(0).findViewById(R.id.head_portrait);
         navigationView.setNavigationItemSelectedListener(this);
 
-        List<User> user = DataSupport.where("id = ?", currentUserId+"").find(User.class);
+        List<User> user = DataSupport.where("id = ?", currentUserId + "").find(User.class);
         navigationView.getMenu().getItem(0).setChecked(true);
         /* 设置用户名 */
         navigationView.getMenu().getItem(4).setTitle(user.get(0).getUsername());
@@ -155,7 +152,7 @@ public class MainActivity extends AppCompatActivity
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.new_notebook:
                         show_dialog();
                         break;
@@ -234,12 +231,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 NoteEntry noteEntry = textNoteEntryList.get(position);
-                if (!noteEntry.isSelected()){
+                if (!noteEntry.isSelected()) {
                     textSelectedNumber++;
                     ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
                     notebookIsSelected.setVisibility(View.VISIBLE);
                     noteEntry.setSelected(true);
-                }else {
+                } else {
                     textSelectedNumber--;
                     ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
                     notebookIsSelected.setVisibility(View.INVISIBLE);
@@ -258,12 +255,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 NoteEntry noteEntry = pptNoteEntryList.get(position);
-                if (!noteEntry.isSelected()){
+                if (!noteEntry.isSelected()) {
                     pptSelectedNumber++;
                     ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
                     notebookIsSelected.setVisibility(View.VISIBLE);
                     noteEntry.setSelected(true);
-                }else {
+                } else {
                     pptSelectedNumber--;
                     ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
                     notebookIsSelected.setVisibility(View.INVISIBLE);
@@ -282,12 +279,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 NoteEntry noteEntry = cardNoteEntryList.get(position);
-                if (!noteEntry.isSelected()){
+                if (!noteEntry.isSelected()) {
                     cardSelectedNumber++;
                     ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
                     notebookIsSelected.setVisibility(View.VISIBLE);
                     noteEntry.setSelected(true);
-                }else {
+                } else {
                     cardSelectedNumber--;
                     ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
                     notebookIsSelected.setVisibility(View.INVISIBLE);
@@ -311,13 +308,13 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 deleteNotebook.setVisibility(View.INVISIBLE);
                 NoteEntry noteEntry;
-                switch (currentPageIndex){
+                switch (currentPageIndex) {
                     case 0:
                         /* 删除操作的逻辑 */
-                        if (textSelectedNumber > 0){
-                            for (int i = textNoteEntryList.size()-1; i >= 0; i--){
+                        if (textSelectedNumber > 0) {
+                            for (int i = textNoteEntryList.size() - 1; i >= 0; i--) {
                                 noteEntry = textNoteEntryList.get(i);
-                                if (noteEntry.isSelected()){
+                                if (noteEntry.isSelected()) {
                                     /* UI上note entry的删除 */
                                     textNoteEntryList.remove(i);
 
@@ -326,13 +323,13 @@ public class MainActivity extends AppCompatActivity
                                       * */
                                     Notebook notebook = textNbs.remove(i);
                                     long notebookId = notebook.getId();
-                                    if (notebook.isSaved()){
+                                    if (notebook.isSaved()) {
                                         notebook.delete();
                                         /* 删除所有的notes */
                                         List<Note> delNotes =
-                                                DataSupport.where("notebookId == ?", notebookId+"").find(Note.class);
-                                        for (Note note:delNotes){
-                                            if (note.isSaved()){
+                                                DataSupport.where("notebookId == ?", notebookId + "").find(Note.class);
+                                        for (Note note : delNotes) {
+                                            if (note.isSaved()) {
                                                 note.delete();
                                             }
                                         }
@@ -348,10 +345,10 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case 1:
                         /* 删除操作的逻辑 */
-                        if (pptSelectedNumber > 0){
-                            for (int i = pptNoteEntryList.size()-1; i >= 0; i--){
+                        if (pptSelectedNumber > 0) {
+                            for (int i = pptNoteEntryList.size() - 1; i >= 0; i--) {
                                 noteEntry = pptNoteEntryList.get(i);
-                                if (noteEntry.isSelected()){
+                                if (noteEntry.isSelected()) {
                                     /* UI上note entry的删除 */
                                     pptNoteEntryList.remove(i);
 
@@ -360,13 +357,13 @@ public class MainActivity extends AppCompatActivity
                                       * */
                                     Notebook notebook = pptNbs.remove(i);
                                     long notebookId = notebook.getId();
-                                    if (notebook.isSaved()){
+                                    if (notebook.isSaved()) {
                                         notebook.delete();
                                         /* 删除所有的notes */
                                         List<Note> delNotes =
-                                                DataSupport.where("notebookId == ?", notebookId+"").find(Note.class);
-                                        for (Note note:delNotes){
-                                            if (note.isSaved()){
+                                                DataSupport.where("notebookId == ?", notebookId + "").find(Note.class);
+                                        for (Note note : delNotes) {
+                                            if (note.isSaved()) {
                                                 note.delete();
                                             }
                                         }
@@ -382,10 +379,10 @@ public class MainActivity extends AppCompatActivity
                         break;
                     case 2:
                         /* 删除操作的逻辑 */
-                        if (cardSelectedNumber > 0){
-                            for (int i = cardNoteEntryList.size()-1; i >= 0; i--){
+                        if (cardSelectedNumber > 0) {
+                            for (int i = cardNoteEntryList.size() - 1; i >= 0; i--) {
                                 noteEntry = cardNoteEntryList.get(i);
-                                if (noteEntry.isSelected()){
+                                if (noteEntry.isSelected()) {
                                     /* UI上note entry的删除 */
                                     cardNoteEntryList.remove(i);
 
@@ -394,13 +391,13 @@ public class MainActivity extends AppCompatActivity
                                       * */
                                     Notebook notebook = cardNbs.remove(i);
                                     long notebookId = notebook.getId();
-                                    if (notebook.isSaved()){
+                                    if (notebook.isSaved()) {
                                         notebook.delete();
                                         /* 删除所有的notes */
                                         List<Note> delNotes =
-                                                DataSupport.where("notebookId == ?", notebookId+"").find(Note.class);
-                                        for (Note note:delNotes){
-                                            if (note.isSaved()){
+                                                DataSupport.where("notebookId == ?", notebookId + "").find(Note.class);
+                                        for (Note note : delNotes) {
+                                            if (note.isSaved()) {
                                                 note.delete();
                                             }
                                         }
@@ -439,7 +436,7 @@ public class MainActivity extends AppCompatActivity
         write = read.edit();
         final boolean headPortraitSaved = read.getBoolean("headPortraitSaved", false);
 
-        if (headPortraitSaved){
+        if (headPortraitSaved) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 3;
             Bitmap bitmap = BitmapFactory.decodeFile(path, options);
@@ -460,8 +457,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0x1){
-            if (data != null){
+        if (requestCode == 0x1) {
+            if (data != null) {
                 Uri uri = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
@@ -470,7 +467,7 @@ public class MainActivity extends AppCompatActivity
                     bitmap.compress(Bitmap.CompressFormat.PNG, 50, fos);
                     fos.flush();
                     fos.close();
-                }catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 write.putBoolean("headPortraitSaved", true);
@@ -484,7 +481,7 @@ public class MainActivity extends AppCompatActivity
         /* 从数据库读取notebook
         * 当前用户的
         * */
-        nbs = DataSupport.where("userId == ?", currentUserId+"").find(Notebook.class);
+        nbs = DataSupport.where("userId == ?", currentUserId + "").find(Notebook.class);
 
         /* 局部变量，用于存储某个Notebook中所有的notes */
         List<Note> notes;
@@ -493,10 +490,10 @@ public class MainActivity extends AppCompatActivity
         Bitmap bitmap;
 
         /* 好的，现在读取笔记本 */
-        for (Notebook nb: nbs){
-            Log.w(TAG, "initEntry: "+nb.getName() + "\\"+nb.getType() + "\\" + nb.getId());
+        for (Notebook nb : nbs) {
+            Log.w(TAG, "initEntry: " + nb.getName() + "\\" + nb.getType() + "\\" + nb.getId());
             /* 查询这个notebook中所有的notes */
-            notes = DataSupport.where("notebookId == ?", ""+nb.getId()).find(Note.class);
+            notes = DataSupport.where("notebookId == ?", "" + nb.getId()).find(Note.class);
             /* 取出第一条note
             *  如果有第一条note，那么根据这条note设置相应显示的图片
             * */
@@ -504,9 +501,8 @@ public class MainActivity extends AppCompatActivity
                 firstNote = notes.get(0);
                 path = firstNote.getPath();
                 bitmap = BitmapFactory.decodeFile(path);
-            }
-            else{
-                switch (nb.getType()){
+            } else {
+                switch (nb.getType()) {
                     case Notebook.NOTE_TYPE_TEXT:
                         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_text);
                         break;
@@ -523,12 +519,10 @@ public class MainActivity extends AppCompatActivity
             if (nb.getType() == Notebook.NOTE_TYPE_TEXT) {
                 textNbs.add(nb);
                 textNoteEntryList.add(new NoteEntry(nb.getName(), nb.getDate(), bitmap));
-            }
-            else if (nb.getType() == Notebook.NOTE_TYPE_PPT) {
+            } else if (nb.getType() == Notebook.NOTE_TYPE_PPT) {
                 pptNbs.add(nb);
                 pptNoteEntryList.add(new NoteEntry(nb.getName(), nb.getDate(), bitmap));
-            }
-            else if(nb.getType() == Notebook.NOTE_TYPE_CARD)  {
+            } else if (nb.getType() == Notebook.NOTE_TYPE_CARD) {
                 cardNbs.add(nb);
                 cardNoteEntryList.add(new NoteEntry(nb.getName(), nb.getDate(), bitmap));
             }
@@ -585,7 +579,7 @@ public class MainActivity extends AppCompatActivity
                         /* 清除当前page的所有notebook的选中状态 */
                         textSelectedNumber = 0;
                         // 现在需要获得list view中的所有view
-                        for (int i = 0 ; i < textNoteEntryList.size(); i++){
+                        for (int i = 0; i < textNoteEntryList.size(); i++) {
                             /* 得到当前索引位置的view */
                             View view = textListView.getChildAt(i);
                             ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
@@ -600,7 +594,7 @@ public class MainActivity extends AppCompatActivity
                         /* 清除当前page的所有notebook的选中状态 */
                         pptSelectedNumber = 0;
                         // 现在需要获得list view中的所有view
-                        for (int i = 0 ; i < pptNoteEntryList.size(); i++){
+                        for (int i = 0; i < pptNoteEntryList.size(); i++) {
                             /* 得到当前索引位置的view */
                             View view = pptListView.getChildAt(i);
                             ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
@@ -614,7 +608,7 @@ public class MainActivity extends AppCompatActivity
                         /* 清除当前page的所有notebook的选中状态 */
                         cardSelectedNumber = 0;
                         // 现在需要获得list view中的所有view
-                        for (int i = 0 ; i < cardNoteEntryList.size(); i++){
+                        for (int i = 0; i < cardNoteEntryList.size(); i++) {
                             /* 得到当前索引位置的view */
                             View view = cardListView.getChildAt(i);
                             ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
@@ -674,7 +668,7 @@ public class MainActivity extends AppCompatActivity
                 /* 清除当前page的所有notebook的选中状态 */
                 textSelectedNumber = 0;
                 // 现在需要获得list view中的所有view
-                for (int i = 0 ; i < textNoteEntryList.size(); i++){
+                for (int i = 0; i < textNoteEntryList.size(); i++) {
                     /* 得到当前索引位置的view */
                     View view = textListView.getChildAt(i);
                     ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
@@ -690,7 +684,7 @@ public class MainActivity extends AppCompatActivity
                 /* 清除当前page的所有notebook的选中状态 */
                 pptSelectedNumber = 0;
                 // 现在需要获得list view中的所有view
-                for (int i = 0 ; i < pptNoteEntryList.size(); i++){
+                for (int i = 0; i < pptNoteEntryList.size(); i++) {
                     /* 得到当前索引位置的view */
                     View view = pptListView.getChildAt(i);
                     ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
@@ -706,7 +700,7 @@ public class MainActivity extends AppCompatActivity
                 /* 清除当前page的所有notebook的选中状态 */
                 cardSelectedNumber = 0;
                 // 现在需要获得list view中的所有view
-                for (int i = 0 ; i < cardNoteEntryList.size(); i++){
+                for (int i = 0; i < cardNoteEntryList.size(); i++) {
                     /* 得到当前索引位置的view */
                     View view = cardListView.getChildAt(i);
                     ImageView notebookIsSelected = view.findViewById(R.id.notebook_is_selected);
@@ -737,7 +731,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void show_dialog(){
+    private void show_dialog() {
         final EditText inputName = new EditText(this);
 //        创建对话框
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -745,55 +739,54 @@ public class MainActivity extends AppCompatActivity
         builder.setTitle("输入笔记本的名称").
                 setView(inputName).
                 setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String name = inputName.getText().toString();
-                Date date = new Date();
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String name = inputName.getText().toString();
+                        Date date = new Date();
                 /* 当创建成功时，修改相应的ui
                  * 并将创建好的notebook添加到数据库中
                   * */
-                if (inputName.getText().toString().length() > 0) {
+                        if (inputName.getText().toString().length() > 0) {
                     /* 为了设置notebook的id
                     * 必须先得到所有的notebooks
                     * */
-                    long id = 1;
-                    List<Notebook> notebooks = DataSupport.findAll(Notebook.class);
-                    if (notebooks.size()>0)
-                        id = notebooks.get(notebooks.size()-1).getId()+1;
-                    Notebook nb = new Notebook(name,date.toString(), currentPageIndex);
-                    NoteEntry entry;
-                    nb.setId(id);
-                    nb.setUserId(currentUserId);
-                    nb.save();
-                    switch (currentPageIndex){
-                        case 0:
-                            textNbs.add(nb);
-                            entry = new NoteEntry(name, date.toString(),
-                                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_text));
-                            textNoteEntryList.add(entry);
-                            textAdapter.notifyDataSetChanged();
-                            break;
-                        case 1:
-                            pptNbs.add(nb);
-                            entry = new NoteEntry(name, date.toString(),
-                                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_ppt));
-                            pptNoteEntryList.add(entry);
-                            pptAdapter.notifyDataSetChanged();
-                            break;
-                        case 2:
-                            cardNbs.add(nb);
-                            entry = new NoteEntry(name, date.toString(),
-                                    BitmapFactory.decodeResource(getResources(), R.drawable.ic_card));
-                            cardNoteEntryList.add(entry);
-                            cardAdapter.notifyDataSetChanged();
-                            break;
-                        default:
-                            break;
+                            long id = 1;
+                            List<Notebook> notebooks = DataSupport.findAll(Notebook.class);
+                            if (notebooks.size() > 0)
+                                id = notebooks.get(notebooks.size() - 1).getId() + 1;
+                            Notebook nb = new Notebook(name, date.toString(), currentPageIndex);
+                            NoteEntry entry;
+                            nb.setId(id);
+                            nb.setUserId(currentUserId);
+                            nb.save();
+                            switch (currentPageIndex) {
+                                case 0:
+                                    textNbs.add(nb);
+                                    entry = new NoteEntry(name, date.toString(),
+                                            BitmapFactory.decodeResource(getResources(), R.drawable.ic_text));
+                                    textNoteEntryList.add(entry);
+                                    textAdapter.notifyDataSetChanged();
+                                    break;
+                                case 1:
+                                    pptNbs.add(nb);
+                                    entry = new NoteEntry(name, date.toString(),
+                                            BitmapFactory.decodeResource(getResources(), R.drawable.ic_ppt));
+                                    pptNoteEntryList.add(entry);
+                                    pptAdapter.notifyDataSetChanged();
+                                    break;
+                                case 2:
+                                    cardNbs.add(nb);
+                                    entry = new NoteEntry(name, date.toString(),
+                                            BitmapFactory.decodeResource(getResources(), R.drawable.ic_card));
+                                    cardNoteEntryList.add(entry);
+                                    cardAdapter.notifyDataSetChanged();
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else Toast.makeText(MainActivity.this, "创建失败", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else Toast.makeText(MainActivity.this, "创建失败", Toast.LENGTH_SHORT).show();
-            }
-        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }
@@ -810,15 +803,15 @@ public class MainActivity extends AppCompatActivity
         super.onRestart();
 
         /* 先将几个全局list清空 */
-        for (int i = textNbs.size()-1; i >= 0 ; i-- ) {
+        for (int i = textNbs.size() - 1; i >= 0; i--) {
             textNoteEntryList.remove(i);
             textNbs.remove(i);
         }
-        for (int i = pptNbs.size()-1; i >= 0 ; i-- ) {
+        for (int i = pptNbs.size() - 1; i >= 0; i--) {
             pptNoteEntryList.remove(i);
             pptNbs.remove(i);
         }
-        for (int i = cardNbs.size()-1; i >= 0 ; i-- ) {
+        for (int i = cardNbs.size() - 1; i >= 0; i--) {
             cardNoteEntryList.remove(i);
             cardNbs.remove(i);
         }

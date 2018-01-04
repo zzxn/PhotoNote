@@ -1,16 +1,14 @@
-package com.example.liuhui.photonote;
+package com.example.liuhui.photonote.view;
 
 import android.content.Context;
-import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
+
+import com.example.liuhui.photonote.R;
+import com.example.liuhui.photonote.model.Mark;
 
 /**
  * Created by 16307110325 Zhu xiaoning
@@ -18,16 +16,8 @@ import android.widget.Toast;
  */
 
 
-public class MarkView extends android.support.v7.widget.AppCompatImageView  {
+public class MarkView extends android.support.v7.widget.AppCompatImageView {
     private Mark mark;
-
-    public Mark getMark() {
-        return mark;
-    }
-
-    public void setMark(Mark mark) {
-        this.mark = mark;
-    }
 
     public MarkView(final Context context, final View parent, final Mark mark) {
         super(context);
@@ -63,5 +53,13 @@ public class MarkView extends android.support.v7.widget.AppCompatImageView  {
                 });
             }
         });
+    }
+
+    public Mark getMark() {
+        return mark;
+    }
+
+    public void setMark(Mark mark) {
+        this.mark = mark;
     }
 }

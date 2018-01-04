@@ -1,14 +1,16 @@
 package com.example.liuhui.photonote;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.liuhui.photonote.model.User;
 
 import org.litepal.crud.DataSupport;
 
@@ -45,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         /* 如果是login，则直接跳转到MainActivity
          * 并将currentId传给MainActivity
           * */
-        if (isLogin){
+        if (isLogin) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("currentUserId", currentUserId);
             intent.putExtra("directStart", true);
@@ -61,8 +63,8 @@ public class LoginActivity extends AppCompatActivity {
         boolean fromMainActivity = getIntent().getBooleanExtra("fromMainActivity", false);
         if (!fromMainActivity)
             new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
-                .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
-                .create().show(this);
+                    .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
+                    .create().show(this);
 
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
@@ -90,8 +92,8 @@ public class LoginActivity extends AppCompatActivity {
                         * */
                         List<User> users2 = DataSupport.
                                 where("password == ?", passw).find(User.class);
-                        for (User user: users2) {
-                            if (user.getUsername().equals(uname)){
+                        for (User user : users2) {
+                            if (user.getUsername().equals(uname)) {
                                 Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                 isLogin = true;
                                 currentUserId = user.getId();
@@ -132,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                         User user = new User(uname, passw);
                         user.save();
-                        Log.w(TAG, "onClick: user id:"+user.getId());
+                        Log.w(TAG, "onClick: user id:" + user.getId());
 
                         /* 将isLogin和currentUserId保存到本地 */
                         isLogin = true;

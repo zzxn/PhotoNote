@@ -25,7 +25,7 @@
 
         <com.mingle.widget.LoadingView
             android:layout_width="108dp"
-            android:layout_height="108dp" />
+            android:layout_height="108dp"/>
 
         <TextView
             android:layout_width="108dp"
@@ -34,7 +34,7 @@
             android:text="@string/onSaving"
             android:textAlignment="center"
             android:textColor="@color/darkGreen"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
     </RelativeLayout>
 
@@ -55,7 +55,7 @@
                 android:id="@+id/pre_photo"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                tools:ignore="ContentDescription" />
+                tools:ignore="ContentDescription"/>
 
             <TextView
                 android:visibility="invisible"
@@ -67,7 +67,7 @@
                 android:textColor="@color/white"
                 android:layout_width="16dp"
                 android:layout_height="16dp"
-                tools:ignore="HardcodedText" />
+                tools:ignore="HardcodedText"/>
 
         </FrameLayout>
 
@@ -78,7 +78,7 @@
             android:layout_width="48dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
         <ImageView
             android:layout_margin="20dp"
@@ -87,7 +87,7 @@
             android:layout_width="48dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
         <ImageView
             android:layout_margin="20dp"
@@ -96,7 +96,7 @@
             android:layout_width="48dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
         <ImageView
             android:layout_margin="20dp"
@@ -105,7 +105,7 @@
             android:layout_width="48dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"/>
 
     </LinearLayout>
 

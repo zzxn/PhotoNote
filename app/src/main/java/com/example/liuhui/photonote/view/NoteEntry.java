@@ -1,4 +1,4 @@
-package com.example.liuhui.photonote;
+package com.example.liuhui.photonote.view;
 
 import android.graphics.Bitmap;
 
@@ -43,11 +43,11 @@ public class NoteEntry {
         this.picture = picture;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-
     public boolean isSelected() {
         return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }

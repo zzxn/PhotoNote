@@ -1,9 +1,7 @@
-package com.example.liuhui.photonote;
+package com.example.liuhui.photonote.view;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,8 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.liuhui.photonote.R;
+import com.example.liuhui.photonote.model.Mark;
 
 /**
  * Created by 16307110325 Zhu xiaoning
@@ -20,6 +20,7 @@ import android.widget.Toast;
  */
 
 public class MarkPopupWindow extends PopupWindow {
+    private static String TAG = "MarkPopupWindow";
     private View view;
     private Button editBtn;
     private Button deleteBtn;
@@ -27,7 +28,6 @@ public class MarkPopupWindow extends PopupWindow {
     private Mark mMark;
     private Context mContext;
     private View.OnClickListener onDismiss;
-    private static String TAG = "MarkPopupWindow";
 
     public MarkPopupWindow(Context context, Mark mark) {
         this.view = LayoutInflater.from(context).inflate(R.layout.mark_pop, null);

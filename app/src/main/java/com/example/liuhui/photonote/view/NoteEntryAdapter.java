@@ -1,4 +1,4 @@
-package com.example.liuhui.photonote;
+package com.example.liuhui.photonote.view;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.liuhui.photonote.R;
+
 import java.util.List;
 
 import static android.content.ContentValues.TAG;

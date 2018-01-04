@@ -4,10 +4,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -16,13 +16,15 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
+
+import com.example.liuhui.photonote.model.Note;
+import com.example.liuhui.photonote.model.Notebook;
+import com.example.liuhui.photonote.view.NoteView;
+import com.example.liuhui.photonote.view.NoteViewAdapter;
 
 import org.litepal.crud.DataSupport;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -32,16 +34,16 @@ public class ViewNotebookActivity extends AppCompatActivity {
 
     private final String TAG = "ViewNotebookActivity";
 
-//    记录当前所有笔记的array list
+    //    记录当前所有笔记的array list
     private ArrayList<NoteView> notes = new ArrayList<>();
 
-//    记录当前所有数据库中note的array list
+    //    记录当前所有数据库中note的array list
     private ArrayList<Note> databaseNotes = new ArrayList<>();
 
-//    根据传入的path创建bitmap对象链表
+    //    根据传入的path创建bitmap对象链表
     private ArrayList<Bitmap> savedBitmaps = new ArrayList<>();
 
-//    记录当前所有的paths
+    //    记录当前所有的paths
     private ArrayList<String> paths = new ArrayList<>();
 
     private GridView noteGridView;
@@ -77,7 +79,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
         /* 不是从MainActivity启动，则是从TakePhotoActivity启动，这个notebook是一个新建的notebook
          * 得到notes的path,以及notebook的类型(currentPageIndex)
           * */
-        if (!fromMain){
+        if (!fromMain) {
             paths = getIntent().getStringArrayListExtra("paths");
             type = getIntent().getIntExtra("currentPageIndex", 0);
             currentUserId = getIntent().getLongExtra("currentUserId", 0);
@@ -95,24 +97,24 @@ public class ViewNotebookActivity extends AppCompatActivity {
              * 必须先得到所有的notebooks
               * */
             List<Notebook> notebooks = DataSupport.findAll(Notebook.class);
-            if (notebooks.size()>0)
-                notebook.setId(notebooks.get(notebooks.size()-1).getId()+1);
+            if (notebooks.size() > 0)
+                notebook.setId(notebooks.get(notebooks.size() - 1).getId() + 1);
             else
                 notebook.setId(1);
 
             notebook.save();
             /* 得到当前notebook的id */
             id = notebook.getId();
-            Log.w(TAG, "onCreate: notebook id"+id);
+            Log.w(TAG, "onCreate: notebook id" + id);
 
             /* 计算一下现在数据库中最后一个note的id */
             List<Note> notes2 = DataSupport.findAll(Note.class);
             long lastId = 1;
             if (notes2.size() > 1)
-                lastId = notes2.get(notes2.size()-1).getId()+1;
+                lastId = notes2.get(notes2.size() - 1).getId() + 1;
 
             /* 将这个notebook的所有notes保存 */
-            for (String path: paths){
+            for (String path : paths) {
                 Note note = new Note();
                 note.setPath(path);
                 note.setNotebookId(notebook.getId());
@@ -128,12 +130,12 @@ public class ViewNotebookActivity extends AppCompatActivity {
         else {
             name = getIntent().getStringExtra("name");
             id = getIntent().getLongExtra("id", 0);
-            Log.w(TAG, "onCreate: notebook id"+id);
+            Log.w(TAG, "onCreate: notebook id" + id);
 
             /* 找到这个notebook所有的notes */
-            List<Note> notes1 = DataSupport.where("notebookId == ?", id+"").find(Note.class);
+            List<Note> notes1 = DataSupport.where("notebookId == ?", id + "").find(Note.class);
             /* 然后将note的path添加到paths中 */
-            for (Note note: notes1){
+            for (Note note : notes1) {
                 databaseNotes.add(note);
                 paths.add(note.getPath());
             }
@@ -152,8 +154,8 @@ public class ViewNotebookActivity extends AppCompatActivity {
         });
 
 //        根据paths创建bitmap对象链表
-        for (String path:paths
-             ) {
+        for (String path : paths
+                ) {
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             savedBitmaps.add(bitmap);
         }
@@ -163,7 +165,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
 //        得到布局中的take photo
         takePhoto = (FloatingActionButton) findViewById(R.id.take_photo);
 //        得到布局中的delete note
-        deleteNote = (FloatingActionButton) findViewById(R.id.delete_note); 
+        deleteNote = (FloatingActionButton) findViewById(R.id.delete_note);
 
 //        初始化notebook
         initNotebook();
@@ -182,8 +184,8 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 bundle.putParcelableArrayList("notes", databaseNotes);
                 intent.putExtras(bundle);
                 intent.putExtra("currentIndex", i);
-                for (Note note:databaseNotes){
-                    Log.w(TAG, "past note's path "+note.getPath());
+                for (Note note : databaseNotes) {
+                    Log.w(TAG, "past note's path " + note.getPath());
                 }
                 startActivity(intent);
             }
@@ -195,12 +197,12 @@ public class ViewNotebookActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 //                切换noteView的选中状态
                 NoteView noteView = notes.get(position);
-                if (!noteView.isSelected()){
+                if (!noteView.isSelected()) {
                     selectedNoteNumber++;
                     ImageView noteIsSelected = view.findViewById(R.id.note_is_selected);
                     noteIsSelected.setVisibility(View.VISIBLE);
                     noteView.setSelected(true);
-                }else {
+                } else {
                     selectedNoteNumber--;
                     ImageView noteIsSelected = view.findViewById(R.id.note_is_selected);
                     noteIsSelected.setVisibility(View.INVISIBLE);
@@ -215,7 +217,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 return true;
             }
         });
-        
+
 //        监听deleteNote的点击事件
         /* 从数据库删除note的逻辑还没写 */
         deleteNote.setOnClickListener(new View.OnClickListener() {
@@ -225,11 +227,11 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 if (selectedNoteNumber > 0) {
 //                    删除notes中应该删除的元素和paths中的路径
 //                    外加删除数据库中的note
-                    for(int i = 0 ; i < notes.size(); i++){
+                    for (int i = 0; i < notes.size(); i++) {
                         noteView = notes.get(i);
 //                        重新设置noteView中的noteNumber
-                        noteView.setNoteNumber(i+1);
-                        if (noteView.isSelected()){
+                        noteView.setNoteNumber(i + 1);
+                        if (noteView.isSelected()) {
                             notes.remove(i);
                             paths.remove(i);
 
@@ -267,11 +269,11 @@ public class ViewNotebookActivity extends AppCompatActivity {
 
 
     /* 初始化，更新ui */
-    private void initNotebook(){
+    private void initNotebook() {
         int size = savedBitmaps.size();
 
-        for (int i = 0 ; i < size ; i++)
-            notes.add(new NoteView(i+1, savedBitmaps.get(i), paths.get(i)));
+        for (int i = 0; i < size; i++)
+            notes.add(new NoteView(i + 1, savedBitmaps.get(i), paths.get(i)));
 
         notesAdapter = new NoteViewAdapter(ViewNotebookActivity.this,
                 R.layout.note_view_container, notes);
@@ -294,19 +296,19 @@ public class ViewNotebookActivity extends AppCompatActivity {
     * */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode){
+        switch (requestCode) {
             case REQUEST_PHOTO_FROM_TAKE_PHOTO:
-                if (resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
 //                    从take photo activity中得到新的photo
                     ArrayList<String> newPaths = data.getStringArrayListExtra("newPaths");
-                    if (newPaths!=null && newPaths.size() > 0) {
+                    if (newPaths != null && newPaths.size() > 0) {
                         int currentNumber = paths.size();
                         Bitmap bitmap;
 
                         List<Note> dNotes = DataSupport.findAll(Note.class);
                         long lastId = 1;
                         if (dNotes.size() > 1)
-                            lastId = dNotes.get(dNotes.size()-1).getId()+1;
+                            lastId = dNotes.get(dNotes.size() - 1).getId() + 1;
 
 //                    将相关数据添加到相应的集合中
                         for (String path : newPaths
@@ -314,7 +316,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
                             /* 这里是UI方面的逻辑 */
                             paths.add(path);
                             bitmap = BitmapFactory.decodeFile(path);
-                            notes.add(new NoteView(currentNumber+1, bitmap, path));
+                            notes.add(new NoteView(currentNumber + 1, bitmap, path));
                             currentNumber++;
 
                             /* 将新拍摄的note储存到数据库中 */
@@ -342,7 +344,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
     /* 用于得到用户输入的新的notebook的名字
      * 如果那么改变了，那么便更新数据库中的数据
       * */
-    private void show_dialog(){
+    private void show_dialog() {
         final EditText inputName = new EditText(this);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -355,7 +357,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String inputN = inputName.getText().toString();
-                if (inputN.length() > 0){
+                if (inputN.length() > 0) {
                     toolbar.setTitle(inputN);
                     name = inputN;
                     /* 更新notebook的name */
