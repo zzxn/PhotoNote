@@ -43,6 +43,12 @@ public class MarkView extends android.support.v7.widget.AppCompatImageView  {
                 }
                 MarkPopupWindow popupWindow = new MarkPopupWindow(context, getMark());
                 popupWindow.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
+                popupWindow.setOnDismiss(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((ViewGroup) parent).removeView(MarkView.this);
+                    }
+                });
             }
         });
     }
