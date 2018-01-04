@@ -117,7 +117,6 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 note.setPath(path);
                 note.setNotebookId(notebook.getId());
                 note.setId(lastId);
-                note.setWriting("第一条笔记");
                 note.save();
                 lastId++;
                 databaseNotes.add(note);
@@ -324,7 +323,6 @@ public class ViewNotebookActivity extends AppCompatActivity {
                             note.setPath(path);
                             note.setNotebookId(id);
                             note.setId(lastId);
-                            note.setWriting("第一条笔记");
                             note.save();
 
                             lastId++;

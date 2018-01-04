@@ -10,8 +10,6 @@ public class Note extends DataSupport implements Parcelable {
     /* photo保存的路径 */
     private String path;
 
-    private String writing;
-
     /* 笔记所属notebook的id */
     private long notebookId;
 
@@ -60,7 +58,6 @@ public class Note extends DataSupport implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(path);
-        dest.writeString(writing);
         dest.writeLong(notebookId);
         dest.writeLong(id);
     }
@@ -75,7 +72,6 @@ public class Note extends DataSupport implements Parcelable {
         public Note createFromParcel(Parcel in) {
             Note note = new Note();
             note.path = in.readString();
-            note.writing = in.readString();
             note.notebookId = in.readLong();
             note.id = in.readLong();
             return note;
@@ -87,11 +83,4 @@ public class Note extends DataSupport implements Parcelable {
         }
     };
 
-    public String getWriting() {
-        return writing;
-    }
-
-    public void setWriting(String writing) {
-        this.writing = writing;
-    }
 }
