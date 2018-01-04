@@ -20,7 +20,9 @@ import android.widget.Toast;
 
 import org.litepal.crud.DataSupport;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -56,6 +58,8 @@ public class ViewNotebookActivity extends AppCompatActivity {
 
     private long id = 0;
 
+    private long currentUserId = 0;
+
     private int type = 0;
 
     private String name = "";
@@ -76,6 +80,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
         if (!fromMain){
             paths = getIntent().getStringArrayListExtra("paths");
             type = getIntent().getIntExtra("currentPageIndex", 0);
+            currentUserId = getIntent().getLongExtra("currentUserId", 0);
             name = "新笔记";
 
             /* 将这个新建的notebook保存 */
@@ -83,6 +88,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
             Date date = new Date();
             notebook.setName(name);
             notebook.setType(type);
+            notebook.setUserId(currentUserId);
             notebook.setDate(date.toString());
 
             /* 为了设置notebook的id
@@ -176,8 +182,9 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 bundle.putParcelableArrayList("notes", databaseNotes);
                 intent.putExtras(bundle);
                 intent.putExtra("currentIndex", i);
-                intent.putExtra("paths", paths);
-                Log.w(TAG, "onItemClick: put extra note");
+                for (Note note:databaseNotes){
+                    Log.w(TAG, "past note's path "+note.getPath());
+                }
                 startActivity(intent);
             }
         });
@@ -228,13 +235,10 @@ public class ViewNotebookActivity extends AppCompatActivity {
 
                             /* 现在删除数据库中的note和其中存储的marks */
                             Note note = databaseNotes.remove(i);
-                            long noteId = note.getId();
                             /* 删除note */
                             if (note.isSaved()) {
                                 Log.w(TAG, "onClick: delete a note and it's marks");
                                 note.delete();
-                                /* 删除与之关联的marks */
-                                DataSupport.deleteAll(Mark.class, "noteId = ?", noteId + "");
                             }
                             i--;
                             selectedNoteNumber--;
@@ -346,7 +350,6 @@ public class ViewNotebookActivity extends AppCompatActivity {
         builder.setTitle("输入笔记本名称哈").setView(inputName).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(ViewNotebookActivity.this, "取消输入", Toast.LENGTH_SHORT).show();
             }
         }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
@@ -355,7 +358,6 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 if (inputN.length() > 0){
                     toolbar.setTitle(inputN);
                     name = inputN;
-                    Toast.makeText(ViewNotebookActivity.this, name, Toast.LENGTH_SHORT).show();
                     /* 更新notebook的name */
                     Notebook notebook = new Notebook();
                     notebook.setName(name);

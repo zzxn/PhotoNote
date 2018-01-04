@@ -2,6 +2,7 @@ package com.example.liuhui.photonote;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -74,6 +75,9 @@ public class MainActivity extends AppCompatActivity
     private int pptSelectedNumber = 0;
     private int cardSelectedNumber = 0;
 
+    /* 存储当前user的id */
+    private long currentUserId = 0;
+
     private final String TAG = "MainActivity";
 
     @Override
@@ -81,10 +85,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
+        boolean directStart = getIntent().getBooleanExtra("directStart", false);
+        if(directStart)
+            new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
                     .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
-                .create().show(this);
+                    .create().show(this);
 
+        currentUserId = getIntent().getLongExtra("currentUserId", 0);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -104,7 +111,10 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        List<User> user = DataSupport.where("id = ?", currentUserId+"").find(User.class);
         navigationView.getMenu().getItem(0).setChecked(true);
+        /* 设置用户名 */
+        navigationView.getMenu().getItem(4).setTitle(user.get(0).getUsername());
 
         // setViewPager
         setViewPager();
@@ -133,8 +143,6 @@ public class MainActivity extends AppCompatActivity
                 switch (item.getItemId()){
                     case R.id.new_notebook:
                         show_dialog();
-                        break;
-                    case R.id.action_settings:
                         break;
                     default:
                         break;
@@ -309,10 +317,8 @@ public class MainActivity extends AppCompatActivity
                                         List<Note> delNotes =
                                                 DataSupport.where("notebookId == ?", notebookId+"").find(Note.class);
                                         for (Note note:delNotes){
-                                            long noteId = note.getId();
                                             if (note.isSaved()){
                                                 note.delete();
-                                                DataSupport.deleteAll(Mark.class, "noteId = ?", noteId+"");
                                             }
                                         }
                                     }
@@ -345,10 +351,8 @@ public class MainActivity extends AppCompatActivity
                                         List<Note> delNotes =
                                                 DataSupport.where("notebookId == ?", notebookId+"").find(Note.class);
                                         for (Note note:delNotes){
-                                            long noteId = note.getId();
                                             if (note.isSaved()){
                                                 note.delete();
-                                                DataSupport.deleteAll(Mark.class, "noteId = ?", noteId+"");
                                             }
                                         }
                                     }
@@ -381,10 +385,8 @@ public class MainActivity extends AppCompatActivity
                                         List<Note> delNotes =
                                                 DataSupport.where("notebookId == ?", notebookId+"").find(Note.class);
                                         for (Note note:delNotes){
-                                            long noteId = note.getId();
                                             if (note.isSaved()){
                                                 note.delete();
-                                                DataSupport.deleteAll(Mark.class, "noteId = ?", noteId+"");
                                             }
                                         }
                                     }
@@ -412,6 +414,7 @@ public class MainActivity extends AppCompatActivity
                  * 这样就可以在创建一个笔记本的时候，知道这个笔记本的类型
                   * */
                 intent.putExtra("currentPageIndex", currentPageIndex);
+                intent.putExtra("currentUserId", currentUserId);
                 startActivity(intent);
             }
         });
@@ -419,19 +422,16 @@ public class MainActivity extends AppCompatActivity
 
     /* 从数据读入数据的初始化操作 */
     private void initEntry() {
-        /* 从数据库读取notebook */
-        nbs = DataSupport.findAll(Notebook.class);
+        /* 从数据库读取notebook
+        * 当前用户的
+        * */
+        nbs = DataSupport.where("userId == ?", currentUserId+"").find(Notebook.class);
 
         /* 局部变量，用于存储某个Notebook中所有的notes */
         List<Note> notes;
         Note firstNote;
         String path;
         Bitmap bitmap;
-
-        /* 读取数据库中所有的notes */
-        notes = DataSupport.findAll(Note.class);
-        for (Note note: notes)
-            Log.w(TAG, "initEntry: "+note.getNotebookId());
 
         /* 好的，现在读取笔记本 */
         for (Notebook nb: nbs){
@@ -599,11 +599,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -659,8 +654,23 @@ public class MainActivity extends AppCompatActivity
                     notebookIsSelected.setVisibility(View.INVISIBLE);
                     cardNoteEntryList.get(i).setSelected(false);
                 }
-
                 viewPager.setCurrentItem(2);
+                break;
+            case R.id.sign_out:
+                /* 先从本地读取数据 */
+                SharedPreferences read = getSharedPreferences("data", MODE_PRIVATE);
+                final SharedPreferences.Editor write = read.edit();
+                write.putBoolean("isLogin", false);
+                write.putLong("currentUserId", currentUserId);
+                write.apply();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.putExtra("fromMainActivity", true);
+                startActivity(intent);
+                MainActivity.this.finish();
+                break;
+            case R.id.user:
+                break;
+            default:
                 break;
         }
 
@@ -675,7 +685,6 @@ public class MainActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        设置对话框的标题
         builder.setTitle("输入笔记本的名称").
-                setIcon(R.drawable.notebook).
                 setView(inputName).
                 setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
@@ -696,6 +705,7 @@ public class MainActivity extends AppCompatActivity
                     Notebook nb = new Notebook(name,date.toString(), currentPageIndex);
                     NoteEntry entry;
                     nb.setId(id);
+                    nb.setUserId(currentUserId);
                     nb.save();
                     switch (currentPageIndex){
                         case 0:
@@ -722,14 +732,12 @@ public class MainActivity extends AppCompatActivity
                         default:
                             break;
                     }
-                    Toast.makeText(MainActivity.this, name, Toast.LENGTH_SHORT).show();
                 }
                 else Toast.makeText(MainActivity.this, "创建失败", Toast.LENGTH_SHORT).show();
             }
         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(MainActivity.this, "取消创建", Toast.LENGTH_SHORT).show();;
             }
         });
 

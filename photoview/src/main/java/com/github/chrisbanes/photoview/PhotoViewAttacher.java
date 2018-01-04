@@ -186,6 +186,7 @@ public class PhotoViewAttacher implements View.OnTouchListener,
                     float x = (tx + w / 2 - rx) / w;
                     float y = (ty + h / 2 - ry) / h;
                     mOnLongPressListener.onLongPress(x, y);
+                    Log.d(TAG, String.format("onLongPress: (%f, %f)", x, y));
                 }
             }
 
@@ -361,28 +362,6 @@ public class PhotoViewAttacher implements View.OnTouchListener,
         boolean handled = false;
 
         if (mZoomEnabled && Util.hasDrawable((ImageView) v)) {
-
-            // 图片在屏幕上呈现的宽度和高度
-            float w = getDisplayRect().width();
-            float h = getDisplayRect().height();
-//            Log.d(TAG, String.format("ImageW&H: (%f, %f)", w, h));
-
-            // 触摸点相对于photoView区域（标题栏以下部分）左上角的坐标
-            float tx = ev.getX() - v.getX(); // 修正图片排列带来的误差
-            float ty = ev.getY() - v.getY();
-//            Log.d(TAG, String.format("onTouch: (%f, %f)", tx, ty));
-
-            // 图片中心点的坐标
-            float rx = getDisplayRect().centerX();
-            float ry = getDisplayRect().centerY();
-//            Log.d(TAG, String.format("ImageCenter: (%f, %f)", rx, ry));
-
-            // 触摸点相对于图片的相对坐标
-            float x = (tx + w/2 - rx) / w;
-            float y = (ty + h/2 - ry) / h;
-
-            Log.d(TAG, String.format("TouchPoint: (%f, %f) \n", x, y));
-
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     ViewParent parent = v.getParent();
@@ -790,8 +769,8 @@ public class PhotoViewAttacher implements View.OnTouchListener,
         }
     }
 
-    public void setmOnLongPressListener(OnLongPressListener mOnLongPressListener){
-        this.mOnLongPressListener = mOnLongPressListener;
+    public void setOnLongPressListener(OnLongPressListener onLongPressListener){
+        this.mOnLongPressListener = onLongPressListener;
     }
 
     private class AnimatedZoomRunnable implements Runnable {

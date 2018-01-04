@@ -20,6 +20,8 @@ public class Notebook extends DataSupport {
     /* notebook的id */
     private long id;
 
+    private long userId;
+
     /* 构造器 */
     public Notebook(String name, String date, int type){
         this.name = name;
@@ -63,5 +65,13 @@ public class Notebook extends DataSupport {
     /* 需要自己手动设置id了 */
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }

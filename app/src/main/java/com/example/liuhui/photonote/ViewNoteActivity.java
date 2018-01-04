@@ -108,6 +108,8 @@ public class ViewNoteActivity extends AppCompatActivity {
                 mark_layer.addView(markView);
                 // 监控图片位置变化，使得Mark位置随之改变
                 new Thread(new Runnable() {
+                    private float oldX;
+                    private float oldY;
                     @Override
                     public void run() {
                         while (true) {
@@ -120,8 +122,12 @@ public class ViewNoteActivity extends AppCompatActivity {
                                     float oy = rectF.centerY() - rectF.height()/2;
                                     float x = ox + rectF.width() * mark.getX();
                                     float y = oy + rectF.height() * mark.getY();
-                                    markView.setX(x);
-                                    markView.setY(y);
+                                    if (oldX != x || oldY != y) {
+                                        oldX = x;
+                                        oldY = y;
+                                        markView.setTranslationX(x);
+                                        markView.setTranslationY(y);
+                                    }
                                 }
                             });
                             try {

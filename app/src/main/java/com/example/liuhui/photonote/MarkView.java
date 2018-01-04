@@ -39,10 +39,16 @@ public class MarkView extends android.support.v7.widget.AppCompatImageView  {
             public void onClick(View view) {
                 if (mark == null) {
                     Toast.makeText(getContext(), "Mark未初始化", Toast.LENGTH_SHORT).show();
-                        return;
+                    return;
                 }
                 MarkPopupWindow popupWindow = new MarkPopupWindow(context, getMark());
                 popupWindow.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
+                popupWindow.setOnDismiss(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((ViewGroup) parent).removeView(MarkView.this);
+                    }
+                });
             }
         });
     }
