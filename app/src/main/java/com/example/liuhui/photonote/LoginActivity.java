@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                                 where("password == ?", passw).find(User.class);
                         for (User user: users2) {
                             if (user.getUsername().equals(uname)){
-                                Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                                 isLogin = true;
                                 currentUserId = user.getId();
                                 Log.w(TAG, "onClick: user id:" + currentUserId);

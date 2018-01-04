@@ -5,7 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -28,10 +32,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import org.litepal.crud.DataSupport;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
-import site.gemus.openingstartanimation.LineDrawStrategy;
 import site.gemus.openingstartanimation.OpeningStartAnimation;
 import site.gemus.openingstartanimation.RedYellowBlueDrawStrategy;
 
@@ -80,6 +87,11 @@ public class MainActivity extends AppCompatActivity
 
     private final String TAG = "MainActivity";
 
+    private ImageView headPortrait;
+    private SharedPreferences.Editor write;
+    private String path;
+    private File saveFile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +108,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
+        saveFile = new File(getExternalFilesDir("img"), "head.jpg");
+        path = saveFile.getAbsolutePath();
 
         // set two floating buttons
         FloatingActionButton takePhoto = (FloatingActionButton) findViewById(R.id.take_photo);
@@ -109,6 +123,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        headPortrait = navigationView.getHeaderView(0).findViewById(R.id.head_portrait);
         navigationView.setNavigationItemSelectedListener(this);
 
         List<User> user = DataSupport.where("id = ?", currentUserId+"").find(User.class);
@@ -418,6 +433,50 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+
+        /* 读取本地数据看是否已经保存了该用户的头像 */
+        SharedPreferences read = getSharedPreferences("data", MODE_PRIVATE);
+        write = read.edit();
+        final boolean headPortraitSaved = read.getBoolean("headPortraitSaved", false);
+
+        if (headPortraitSaved){
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 3;
+            Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+            headPortrait.setImageBitmap(bitmap);
+        }
+
+        /* 设置头像 */
+        headPortrait.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent, 0x1);
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0x1){
+            if (data != null){
+                Uri uri = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                    headPortrait.setImageBitmap(bitmap);
+                    FileOutputStream fos = new FileOutputStream(path);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 50, fos);
+                    fos.flush();
+                    fos.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+                write.putBoolean("headPortraitSaved", true);
+                write.apply();
+            }
+        }
     }
 
     /* 从数据读入数据的初始化操作 */
@@ -658,10 +717,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.sign_out:
                 /* 先从本地读取数据 */
-                SharedPreferences read = getSharedPreferences("data", MODE_PRIVATE);
-                final SharedPreferences.Editor write = read.edit();
                 write.putBoolean("isLogin", false);
                 write.putLong("currentUserId", currentUserId);
+                write.putBoolean("headPortraitSaved", false);
                 write.apply();
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 intent.putExtra("fromMainActivity", true);
@@ -764,8 +822,6 @@ public class MainActivity extends AppCompatActivity
             cardNoteEntryList.remove(i);
             cardNbs.remove(i);
         }
-
-        Log.w(TAG, "onRestart: textNoteEntryList Size: "+textNoteEntryList.size()+"");
 
         /* 调用initEntry
          * 从数据库中再次读入数据
