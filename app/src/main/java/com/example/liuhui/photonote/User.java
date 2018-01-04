@@ -1,5 +1,4 @@
 package com.example.liuhui.photonote;
-import android.widget.EditText;
 
 import org.litepal.crud.DataSupport;
 
@@ -35,17 +34,7 @@ public class User  extends DataSupport {
     }
 
     public void setPassword(String password) {
-        this.password = md5(password);
-    }
-
-    // md5算法，默认是32位加密,加密字符串
-    public static String md5(String source) {
-        try {
-            return Arrays.toString(MessageDigest.getInstance("MD5").digest(source.getBytes()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        this.password = password;
     }
 
     public long getId() {

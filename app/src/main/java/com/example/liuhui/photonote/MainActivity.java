@@ -2,6 +2,7 @@ package com.example.liuhui.photonote;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -651,9 +652,18 @@ public class MainActivity extends AppCompatActivity
                     notebookIsSelected.setVisibility(View.INVISIBLE);
                     cardNoteEntryList.get(i).setSelected(false);
                 }
-
                 viewPager.setCurrentItem(2);
                 break;
+            case R.id.sign_out:
+                /* 先从本地读取数据 */
+                SharedPreferences read = getSharedPreferences("data", MODE_PRIVATE);
+                final SharedPreferences.Editor write = read.edit();
+                write.putBoolean("isLogin", false);
+                write.putLong("currentUserId", currentUserId);
+                write.apply();
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+                MainActivity.this.finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

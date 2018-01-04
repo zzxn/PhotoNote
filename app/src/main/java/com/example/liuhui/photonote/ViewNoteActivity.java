@@ -5,6 +5,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,6 @@ public class ViewNoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_note);
         notes = getIntent().getParcelableArrayListExtra("notes");
-
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
         PagerAdapter pagerAdapter = new PagerAdapter() {

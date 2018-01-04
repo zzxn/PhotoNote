@@ -33,9 +33,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
-                .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
-                .create().show(this);
+        setContentView(R.layout.activity_login);
+//        new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
+//                .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
+//                .create().show(this);
 
         /* 先从本地读取数据 */
         SharedPreferences read = getSharedPreferences("data", MODE_PRIVATE);
@@ -50,9 +51,9 @@ public class LoginActivity extends AppCompatActivity {
         if (isLogin){
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("currentUserId", currentUserId);
+            startActivity(intent);
+            LoginActivity.this.onBackPressed();
         }
-
-        setContentView(R.layout.activity_login);
 
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
@@ -71,19 +72,30 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                 else {
                     List<User> users = DataSupport.
-                            where("username == ?", uname).where("password = ?", passw).find(User.class);
+                            where("username == ?", uname).find(User.class);
                     if (users.size() == 0)
-                        Toast.makeText(LoginActivity.this, "用户名或者密码错误", Toast.LENGTH_SHORT).show();
-                    /* 登陆成功
-                     * 保存相应的数据之后，跳转到MainActivity
-                      * */
+                        Toast.makeText(LoginActivity.this, "用户名错误", Toast.LENGTH_SHORT).show();
                     else {
-                        isLogin = true;
-                        currentUserId = users.get(0).getId();
-                        write.putBoolean("isLogin", isLogin);
-                        write.putLong("currentUserId", currentUserId);
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        intent.putExtra("currentUserId", currentUserId);
+                        /* 登陆成功
+                        * 保存相应的数据之后，跳转到MainActivity
+                        * */
+                        List<User> users2 = DataSupport.
+                                where("password == ?", passw).find(User.class);
+                        if (users2.size() == 0)
+                            Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
+                        else{
+                            Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
+                            isLogin = true;
+                            currentUserId = users.get(0).getId();
+                            Log.w(TAG, "onClick: user id:" + currentUserId);
+                            write.putBoolean("isLogin", isLogin);
+                            write.putLong("currentUserId", currentUserId);
+                            write.apply();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("currentUserId", currentUserId);
+                            startActivity(intent);
+                            LoginActivity.this.onBackPressed();
+                        }
                     }
                 }
             }
@@ -100,17 +112,28 @@ public class LoginActivity extends AppCompatActivity {
                 else if (passw.length() == 0)
                     Toast.makeText(LoginActivity.this, "请输入密码", Toast.LENGTH_SHORT).show();
                 else {
-                   User user = new User(uname, passw);
-                   user.save();
-                   Log.w(TAG, "onClick: user id:"+user.getId());
+                    List<User> userList = DataSupport.
+                            where("username == ?", uname).find(User.class);
+                    if (userList.size() > 0)
+                        Toast.makeText(LoginActivity.this, "该用户已注册", Toast.LENGTH_SHORT).show();
 
-                   /* 将isLogin和currentUserId保存到本地 */
-                    isLogin = true;
-                    currentUserId = user.getId();
-                    write.putBoolean("isLogin", isLogin);
-                    write.putLong("currentUserId", currentUserId);
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("currentUserId", currentUserId);
+                    else {
+                        Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                        User user = new User(uname, passw);
+                        user.save();
+                        Log.w(TAG, "onClick: user id:"+user.getId());
+
+                        /* 将isLogin和currentUserId保存到本地 */
+                        isLogin = true;
+                        currentUserId = user.getId();
+                        write.putBoolean("isLogin", isLogin);
+                        write.putLong("currentUserId", currentUserId);
+                        write.apply();
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("currentUserId", currentUserId);
+                        startActivity(intent);
+                        LoginActivity.this.onBackPressed();
+                    }
                 }
             }
         });

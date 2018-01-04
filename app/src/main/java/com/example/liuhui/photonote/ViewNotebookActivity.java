@@ -80,7 +80,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
         if (!fromMain){
             paths = getIntent().getStringArrayListExtra("paths");
             type = getIntent().getIntExtra("currentPageIndex", 0);
-            currentUserId = getIntent().getIntExtra("currentUserId", 0);
+            currentUserId = getIntent().getLongExtra("currentUserId", 0);
             name = "新笔记";
 
             /* 将这个新建的notebook保存 */
@@ -117,6 +117,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 note.setPath(path);
                 note.setNotebookId(notebook.getId());
                 note.setId(lastId);
+                note.setWriting("第一条笔记");
                 note.save();
                 lastId++;
                 databaseNotes.add(note);
@@ -323,6 +324,7 @@ public class ViewNotebookActivity extends AppCompatActivity {
                             note.setPath(path);
                             note.setNotebookId(id);
                             note.setId(lastId);
+                            note.setWriting("第一条笔记");
                             note.save();
 
                             lastId++;

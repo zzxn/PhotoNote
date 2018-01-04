@@ -1,6 +1,7 @@
 package com.example.liuhui.photonote;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,15 +30,15 @@ public class MarkPopupWindow extends PopupWindow {
         editBtn = view.findViewById(R.id.edit_btn);
         deleteBtn = view.findViewById(R.id.del_btn);
         editText = view.findViewById(R.id.edit_text);
-        editText.setText(note.getMark());
+        editText.setText(note.getWriting());
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // 可编辑状态，点击进行保存
                 if (editText.isEnabled()) {
-                    mNote.setMark(editText.getText().toString());
                     editText.setEnabled(false);
                     editBtn.setText(R.string.edit);
+                    mNote.setWriting(editText.getText().toString());
                     mNote.save();
                 }
                 // 不可编辑（观察）状态
@@ -50,7 +51,8 @@ public class MarkPopupWindow extends PopupWindow {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mNote.setMark("");
+                mNote.setWriting("");
+                mNote.save();
                 editText.setText("");
                 dismiss();
             }
@@ -65,7 +67,7 @@ public class MarkPopupWindow extends PopupWindow {
                 int y = (int) motionEvent.getY();
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                     if (y < h) {
-                        mNote.setMark(editText.getText().toString());
+                        mNote.setWriting(editText.getText().toString());
                         mNote.save();
                         dismiss();
                     }
