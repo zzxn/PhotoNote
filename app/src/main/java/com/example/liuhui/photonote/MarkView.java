@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.Toast;
 
 /**
@@ -41,8 +42,19 @@ public class MarkView extends android.support.v7.widget.AppCompatImageView  {
                     Toast.makeText(getContext(), "Mark未初始化", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // 点击时变大
+                MarkView.this.setScaleX(2);
+                MarkView.this.setScaleY(2);
                 MarkPopupWindow popupWindow = new MarkPopupWindow(context, getMark());
                 popupWindow.showAtLocation(parent, Gravity.BOTTOM, 0, 0);
+                popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        // dismiss时变小
+                        MarkView.this.setScaleX(1);
+                        MarkView.this.setScaleY(1);
+                    }
+                });
                 popupWindow.setOnDismiss(new OnClickListener() {
                     @Override
                     public void onClick(View view) {
