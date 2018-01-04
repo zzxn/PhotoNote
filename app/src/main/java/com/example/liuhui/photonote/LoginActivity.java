@@ -34,9 +34,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);
-//        new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
-//                .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
-//                .create().show(this);
 
         /* 先从本地读取数据 */
         SharedPreferences read = getSharedPreferences("data", MODE_PRIVATE);
@@ -51,9 +48,21 @@ public class LoginActivity extends AppCompatActivity {
         if (isLogin){
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("currentUserId", currentUserId);
+            intent.putExtra("directStart", true);
             startActivity(intent);
             LoginActivity.this.onBackPressed();
         }
+
+        /*
+        * 如果没有login
+        * 并且不是从MainActivity中过来
+        * 则需要展示一段动画
+        * */
+        boolean fromMainActivity = getIntent().getBooleanExtra("fromMainActivity", false);
+        if (!fromMainActivity)
+            new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
+                .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
+                .create().show(this);
 
         username = (EditText) findViewById(R.id.username);
         password = (EditText) findViewById(R.id.password);
@@ -81,21 +90,23 @@ public class LoginActivity extends AppCompatActivity {
                         * */
                         List<User> users2 = DataSupport.
                                 where("password == ?", passw).find(User.class);
-                        if (users2.size() == 0)
-                            Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
-                        else{
-                            Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
-                            isLogin = true;
-                            currentUserId = users.get(0).getId();
-                            Log.w(TAG, "onClick: user id:" + currentUserId);
-                            write.putBoolean("isLogin", isLogin);
-                            write.putLong("currentUserId", currentUserId);
-                            write.apply();
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("currentUserId", currentUserId);
-                            startActivity(intent);
-                            LoginActivity.this.onBackPressed();
+                        for (User user: users2) {
+                            if (user.getUsername().equals(uname)){
+                                Toast.makeText(LoginActivity.this, "登陆成功", Toast.LENGTH_SHORT).show();
+                                isLogin = true;
+                                currentUserId = user.getId();
+                                Log.w(TAG, "onClick: user id:" + currentUserId);
+                                write.putBoolean("isLogin", isLogin);
+                                write.putLong("currentUserId", currentUserId);
+                                write.apply();
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.putExtra("currentUserId", currentUserId);
+                                startActivity(intent);
+                                LoginActivity.this.onBackPressed();
+                                return;
+                            }
                         }
+                        Toast.makeText(LoginActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

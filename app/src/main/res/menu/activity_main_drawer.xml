@@ -24,9 +24,9 @@
                 android:icon="@drawable/ic_sign_out"
                 android:title="登出"/>
             <item
-                android:id="@+id/setting"
-                android:icon="@drawable/ic_settings"
-                android:title="设置"/>
+                android:id="@+id/user"
+                android:icon="@drawable/ic_user"
+                android:title="显示用户名"/>
         </menu>
     </item>
 

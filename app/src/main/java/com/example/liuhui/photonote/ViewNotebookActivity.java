@@ -350,7 +350,6 @@ public class ViewNotebookActivity extends AppCompatActivity {
         builder.setTitle("输入笔记本名称哈").setView(inputName).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(ViewNotebookActivity.this, "取消输入", Toast.LENGTH_SHORT).show();
             }
         }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
@@ -359,7 +358,6 @@ public class ViewNotebookActivity extends AppCompatActivity {
                 if (inputN.length() > 0){
                     toolbar.setTitle(inputN);
                     name = inputN;
-                    Toast.makeText(ViewNotebookActivity.this, name, Toast.LENGTH_SHORT).show();
                     /* 更新notebook的name */
                     Notebook notebook = new Notebook();
                     notebook.setName(name);

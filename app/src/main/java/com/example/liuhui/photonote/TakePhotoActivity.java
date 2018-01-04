@@ -145,7 +145,7 @@ public class TakePhotoActivity extends AppCompatActivity {
                 else if (alreadySaved)
                     Toast.makeText(TakePhotoActivity.this, "已经保存", Toast.LENGTH_SHORT).show();
                 else if (alreadyDropped)
-                    Toast.makeText(TakePhotoActivity.this, "已经丢弃", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TakePhotoActivity.this, "早已丢弃", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -155,7 +155,10 @@ public class TakePhotoActivity extends AppCompatActivity {
             public void onClick(View v) {
                 /* 设置已经丢弃 */
                 alreadyDropped = true;
-                Toast.makeText(TakePhotoActivity.this, "丢弃笔记", Toast.LENGTH_SHORT).show();
+                if (!alreadySaved)
+                    Toast.makeText(TakePhotoActivity.this, "丢弃成功", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(TakePhotoActivity.this, "无法丢弃", Toast.LENGTH_SHORT).show();
             }
         });
 

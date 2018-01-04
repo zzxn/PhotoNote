@@ -85,6 +85,12 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        boolean directStart = getIntent().getBooleanExtra("directStart", false);
+        if(directStart)
+            new OpeningStartAnimation.Builder(this).setDrawStategy(new RedYellowBlueDrawStrategy())
+                    .setAnimationInterval(3850).setAnimationFinishTime(450).setAppStatement("Photo Note")
+                    .create().show(this);
+
         currentUserId = getIntent().getLongExtra("currentUserId", 0);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -134,8 +140,6 @@ public class MainActivity extends AppCompatActivity
                 switch (item.getItemId()){
                     case R.id.new_notebook:
                         show_dialog();
-                        break;
-                    case R.id.action_settings:
                         break;
                     default:
                         break;
@@ -592,11 +596,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -662,8 +661,16 @@ public class MainActivity extends AppCompatActivity
                 write.putLong("currentUserId", currentUserId);
                 write.apply();
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.putExtra("fromMainActivity", true);
                 startActivity(intent);
                 MainActivity.this.finish();
+                break;
+            case R.id.user:
+                List<User> user = DataSupport.where("id = ?", currentUserId+"").find(User.class);
+                item.setTitle(user.get(0).getUsername());
+                break;
+            default:
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -677,7 +684,6 @@ public class MainActivity extends AppCompatActivity
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        设置对话框的标题
         builder.setTitle("输入笔记本的名称").
-                setIcon(R.drawable.notebook).
                 setView(inputName).
                 setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
@@ -725,14 +731,12 @@ public class MainActivity extends AppCompatActivity
                         default:
                             break;
                     }
-                    Toast.makeText(MainActivity.this, name, Toast.LENGTH_SHORT).show();
                 }
                 else Toast.makeText(MainActivity.this, "创建失败", Toast.LENGTH_SHORT).show();
             }
         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(MainActivity.this, "取消创建", Toast.LENGTH_SHORT).show();;
             }
         });
 
